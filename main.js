@@ -10,31 +10,39 @@ slider.addEventListener(
 
 const synthKeys = ["A3", "Db4", "E4", "Gb4"];
 
-const sequencers = document.querySelectorAll("tone-step-sequencer");
-for (let i = 0; i < sequencers.length; i++) {
-  const sequencer = sequencers[i];
-  const type = sequencer.dataset.lsType;
+const loop = new Tone.Loop(onTick, "8n").start(0);
 
-  for (let j = 0; j < 4; j++) {
-    sequencer._updateCell(j + i * 4, j);
-  }
+const sequencer = document.querySelector("tone-step-sequencer");
+for (let i = 0; i < sequencer.rows; i++) {
+  sequencer._matrix[i][i] = true;
+}
+sequencer.requestUpdate();
 
-  if (type === "drums") {
-    const drumPlayers = new Tone.Players({
-      baseUrl: "https://tonejs.github.io/audio/drum-samples/4OP-FM/",
-      urls: { 0: "hihat.mp3", 1: "kick.mp3", 2: "snare.mp3", 3: "tom1.mp3" },
-      fadeOut: "64n",
-    }).toDestination();
-    sequencer.addEventListener("trigger", ({ detail }) => {
-      drumPlayers.player(detail.row).start(detail.time, 0, "16t");
-    });
+const synths = [
+  new Tone.PolySynth(Tone.Synth, { oscillator: { type: "sine" } }),
+  new Tone.Players({
+    baseUrl: "https://tonejs.github.io/audio/drum-samples/4OP-FM/",
+    urls: { 0: "hihat.mp3", 1: "kick.mp3", 2: "snare.mp3", 3: "tom1.mp3" },
+    fadeOut: "64n",
+  }),
+  new Tone.PolySynth(Tone.Synth, { oscillator: { type: "sawtooth" } }),
+];
+
+for (const synth of synths) {
+  synth.toDestination();
+}
+
+sequencer.addEventListener("trigger", ({ detail }) => {
+  const synthI = parseInt((detail.row / sequencer.rows) * 3);
+  const synth = synths[synthI];
+  const synthRow = detail.row % (sequencer.rows / 3);
+  if (synthI == 1) {
+    synth.player(synthRow).start(detail.time, 0, "16t");
   } else {
-    const synth = new Tone.PolySynth(Tone.Synth, {
-      oscillator: { type },
-    }).toDestination();
-
-    sequencer.addEventListener("trigger", ({ detail }) => {
-      synth.triggerAttackRelease(synthKeys[detail.row], "16t", detail.time);
-    });
+    synth.triggerAttackRelease(synthKeys[synthRow], "16t", detail.time);
   }
+});
+
+function onTick(time) {
+  window.ls.gol.step();
 }

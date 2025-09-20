@@ -1,6 +1,6 @@
 (function () {
-  new Tone.Loop(onTick, "2n").start("2n");
   const sequencer = document.querySelector("tone-step-sequencer");
+  new Tone.Loop(onTick, "2n").start("2n");
 
   function onTick() {
     const matrix = sequencer._matrix.map((row) => row.slice());

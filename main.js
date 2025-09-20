@@ -8,18 +8,18 @@ slider.addEventListener(
   (e) => (Tone.Transport.bpm.value = parseFloat(e.target.value))
 );
 
-const oscillatorTypes = ["sine", "sawtooth"];
 const synthKeys = ["A3", "Db4", "E4", "Gb4"];
 
 const sequencers = document.querySelectorAll("tone-step-sequencer");
 for (let i = 0; i < sequencers.length; i++) {
   const sequencer = sequencers[i];
+  const type = sequencer.dataset.lsType;
 
-  // for (let j = 0; j < 4; j++) {
-  //   sequencer._updateCell(j + i * 4, j);
-  // }
+  for (let j = 0; j < 4; j++) {
+    sequencer._updateCell(j + i * 4, j);
+  }
 
-  if (i == 2) {
+  if (type === "drums") {
     const drumPlayers = new Tone.Players({
       baseUrl: "https://tonejs.github.io/audio/drum-samples/4OP-FM/",
       urls: { 0: "hihat.mp3", 1: "kick.mp3", 2: "snare.mp3", 3: "tom1.mp3" },
@@ -30,7 +30,7 @@ for (let i = 0; i < sequencers.length; i++) {
     });
   } else {
     const synth = new Tone.PolySynth(Tone.Synth, {
-      oscillator: { type: oscillatorTypes[i] },
+      oscillator: { type },
     }).toDestination();
 
     sequencer.addEventListener("trigger", ({ detail }) => {

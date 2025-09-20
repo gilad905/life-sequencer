@@ -2,40 +2,35 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Step Sequencer</title>
-
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1"
     />
+    <link rel="icon" />
 
     <link
+    rel="stylesheet"
       href="https://fonts.googleapis.com/css?family=Material+Icons&display=block"
-      rel="stylesheet"
     />
+
     <script src="./Tone.js"></script>
     <script src="./tone-ui.js"></script>
     <script src="./components.js"></script>
-    <style type="text/css">
-      tone-transport {
-        margin-bottom: 10px;
-      }
-    </style>
   </head>
   <body>
-      <div id="content">
-        <tone-play-toggle></tone-play-toggle>
-        <tone-slider
-          label="tempo"
-          units="bpm"
-          min="60"
-          max="240"
-          value="120"
-        ></tone-slider>
-        <tone-step-sequencer></tone-step-sequencer>
-        <tone-step-sequencer></tone-step-sequencer>
-        <tone-step-sequencer></tone-step-sequencer>
-      </div>
+    <div id="content">
+      <tone-play-toggle></tone-play-toggle>
+      <tone-slider
+        label="tempo"
+        units="bpm"
+        min="60"
+        max="240"
+        value="120"
+      ></tone-slider>
+      <tone-step-sequencer data-ls-type="sine"></tone-step-sequencer>
+      <tone-step-sequencer data-ls-type="drums"></tone-step-sequencer>
+      <tone-step-sequencer data-ls-type="sawtooth"></tone-step-sequencer>
+    </div>
 
     <script src="./main.js"></script>
   </body>

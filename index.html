@@ -18,6 +18,11 @@
     <script src="./lib/components.js"></script>
 
     <style>
+      #content {
+        max-width: 1000px;
+        margin: auto;
+      }
+
       #buttons > * {
         margin-right: 10px;
       }
@@ -49,6 +54,40 @@
         </label>
       </div>
       <tone-step-sequencer rows="12"></tone-step-sequencer>
+      <p>
+        -- Game of Life sequencer --<br /><br />
+        This is a step sequencer that uses
+        <a
+          target="_blank"
+          href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life"
+          >John Conway's Game of Life</a
+        >
+        to generate evolving patterns.<br />
+        The first four rows are a sawtooth synth, the middle four are drum
+        samples and the bottom four are a sine synth.<br />
+        The next cell generation is produced every 4 steps. <br />Clicking on
+        cells will toggle their state, allowing to make live changes to the
+        sequence.<br /><br />
+        At first glance it might sound pretty random, but with some tweaking and
+        playing around with the patterns I find it interesting to listen to the
+        "natural" developments.<br />
+        For example, sometimes periods of calmness or little percussion will
+        start. Other times the whole "song" will die out on its own.<br />
+        Small changes with the mouse might introduce a gradual change of
+        melody/beat where you can still hear the existing patterns slowly
+        changing with every new bar, etc.<br /><br />
+        The sequencer was made with the
+        <a target="_blank" href="https://tonejs.github.io/">Tone.js</a>
+        framework, also using
+        <a target="_blank" href="https://github.com/Tonejs/ui/">Tone.js UI</a>
+        components and some
+        <a target="_blank" href="https://github.com/Tonejs/audio"
+          >audio samples</a
+        >
+        from their examples.<br />
+        Source code is available on
+        <a target="_blank" href="https://github.com/gilad905/life-sequencer">GitHub</a>.
+      </p>
     </div>
 
     <script src="./utils.js"></script>

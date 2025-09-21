@@ -1,23 +1,34 @@
 (function () {
   const metronome = document.querySelector("#metronome");
   const sequencer = document.querySelector("tone-step-sequencer");
-  const metronomeSynth = new Tone.MembraneSynth().toDestination();
+  const metronomeSynth = new Tone.Synth({
+    envelope: { release: 0.01 },
+  }).toDestination();
+  let tickCounter = 0;
 
   // loadPattern(patterns.glider);
   for (let i = 0; i < 10; i++) {
     loadPattern(patterns.glider, i * 4, i * 4);
   }
 
+  Tone.Transport.on("start", (time) => {
+    hitMetronome(time);
+  });
+  Tone.Transport.on("stop", (time) => {
+    tickCounter = 0;
+  });
+
   new Tone.Loop(onTick, "2n").start("2n");
-  // hitMetronome(Tone.now());
 
   function hitMetronome(time) {
     if (metronome.checked) {
-      metronomeSynth.triggerAttackRelease("C4", "16t", time);
+      const octave = 6 + (tickCounter % 4 == 0 ? 1 : 0);
+      metronomeSynth.triggerAttackRelease(`C${octave}`, "16t", time);
     }
   }
 
   function onTick(time) {
+    tickCounter++;
     hitMetronome(time);
 
     const matrix = sequencer._matrix.map((row) => row.slice());

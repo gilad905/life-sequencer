@@ -12,13 +12,8 @@ function initElements() {
     (e) => (Tone.Transport.bpm.value = parseFloat(e.target.value))
   );
 
-  // const sequencer = document.querySelector("tone-step-sequencer");
-  // for (let i = 0; i < sequencer.rows; i++) {
-  //   sequencer._matrix[i][i] = true;
-  // }
-  // sequencer.requestUpdate();
-
   document.querySelector("#clear").addEventListener("click", () => {
+    const sequencer = document.querySelector("tone-step-sequencer");
     for (let y = 0; y < sequencer._matrix.length; y++) {
       for (let x = 0; x < sequencer._matrix[y].length; x++) {
         sequencer._matrix[y][x] = false;

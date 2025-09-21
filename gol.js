@@ -1,12 +1,25 @@
 (function () {
+  const metronome = document.querySelector("#metronome");
   const sequencer = document.querySelector("tone-step-sequencer");
+  const metronomeSynth = new Tone.MembraneSynth().toDestination();
+
   // loadPattern(patterns.glider);
   for (let i = 0; i < 10; i++) {
     loadPattern(patterns.glider, i * 4, i * 4);
   }
-  new Tone.Loop(onTick, "2n").start("2n");
 
-  function onTick() {
+  new Tone.Loop(onTick, "2n").start("2n");
+  // hitMetronome(Tone.now());
+
+  function hitMetronome(time) {
+    if (metronome.checked) {
+      metronomeSynth.triggerAttackRelease("C4", "16t", time);
+    }
+  }
+
+  function onTick(time) {
+    hitMetronome(time);
+
     const matrix = sequencer._matrix.map((row) => row.slice());
 
     for (let x = 0; x < matrix.length; x++) {

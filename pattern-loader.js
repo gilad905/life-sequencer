@@ -14,15 +14,8 @@
     loadPattern(patterns[e.target.value]);
   });
 
-  // loadPattern(patterns.three_gliders);
-  // for (let i = 0; i < 10; i++) {
-  //   loadPattern(patterns.glider, i * 4, i * 4);
-  // }
-  loadPattern(patterns.spaceship, 0, 0);
-  loadPattern(patterns.spaceship, 8, 0);
-  loadPattern(patterns.spaceship, 2, 6);
-  loadPattern(patterns.spaceship, 10, 6);
-  // loadPattern(patterns.glider, 8, 5);
+  loadPattern(patterns.ten_gliders);
+  // console.log(matrixToString(ls.sequencer._matrix));
 
   function clearSequencer() {
     for (let y = 0; y < ls.sequencer._matrix.length; y++) {
@@ -46,5 +39,13 @@
       }
     }
     ls.sequencer.requestUpdate();
+  }
+
+  function matrixToString(matrix) {
+    const lines = [];
+    for (let x = 0; x < matrix[0].length; x++) {
+      lines.push(matrix.map((row) => (row[x] ? "X" : "_")).join(""));
+    }
+    return lines.join("\n");
   }
 })();

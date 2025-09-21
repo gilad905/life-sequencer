@@ -1,5 +1,6 @@
 (function () {
   const metronome = document.querySelector("#metronome");
+  const evolve = document.querySelector("#evolve");
 
   const metronomeSynth = new Tone.Synth({
     envelope: { release: 0.01 },
@@ -22,7 +23,12 @@
   function onTick(time) {
     tickCounter++;
     hitMetronome(time);
+    if (evolve.checked) {
+      evolveMatrix();
+    }
+  }
 
+  function evolveMatrix() {
     const matrix = ls.sequencer._matrix.map((row) => row.slice());
 
     for (let x = 0; x < matrix.length; x++) {

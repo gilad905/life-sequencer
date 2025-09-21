@@ -17,4 +17,5 @@ The sequencer was made using the [Tone.js](https://tonejs.github.io/) framework,
 also using [Tone.js UI](https://github.com/Tonejs/ui) components and some [audio samples](https://github.com/Tonejs/audio) from their examples.
 
 Source code is available on [GitHub](https://github.com/gilad905/life-sequencer).
+
 [Live Example](https://gilad905.github.io/life-sequencer).

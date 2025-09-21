@@ -1,34 +1,40 @@
 (function () {
   const metronome = document.querySelector("#metronome");
   const evolve = document.querySelector("#evolve");
+  const evolveEvery = document.querySelector("#evolve-every");
+  let tickCounter = 0;
 
   const metronomeSynth = new Tone.Synth({
     envelope: { release: 0.01 },
     volume: ls.defaultVolume,
   }).toDestination();
-  let tickCounter = 0;
 
-  Tone.Transport.on("start", (time) => hitMetronome(time));
-  Tone.Transport.on("stop", (time) => (tickCounter = 0));
+  new Tone.Loop(onMetronomeTick, "2n").start(0);
+  const loop = new Tone.Loop(onTick);
+  loop.interval = `0:0:${parseInt(evolveEvery.value) * 2}`;
 
-  new Tone.Loop(onTick, "2n").start("2n");
+  evolveEvery.addEventListener("change", (e) => {
+    loop.interval = `0:0:${parseInt(e.target.value) * 2}`;
+  });
 
-  function hitMetronome(time) {
+  Tone.Transport.on("start", (time) => {
+    loop.start(loop.interval);
+  });
+  Tone.Transport.on("stop", () => {
+    loop.stop();
+    tickCounter = 0;
+  });
+
+  function onMetronomeTick(time) {
     if (metronome.checked) {
       const octave = 6 + (tickCounter % 4 == 0 ? 1 : 0);
       metronomeSynth.triggerAttackRelease(`C${octave}`, "16t", time);
     }
-  }
-
-  function onTick(time) {
     tickCounter++;
-    hitMetronome(time);
-    if (evolve.checked) {
-      evolveMatrix();
-    }
   }
 
-  function evolveMatrix() {
+  function onTick() {
+    if (!evolve.checked) return;
     const matrix = ls.sequencer._matrix.map((row) => row.slice());
 
     for (let x = 0; x < matrix.length; x++) {

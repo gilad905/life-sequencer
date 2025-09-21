@@ -43,6 +43,19 @@
         <label for="evolve">
           <input type="checkbox" id="evolve" checked />Evolve</label
         >
+        <label for="evolve-every">
+          Evolve every
+          <select id="evolve-every" value="16">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="4">4</option>
+            <option value="8" selected>8</option>
+            <option value="16">16</option>
+            <option value="32">32</option>
+            <option value="64">64</option>
+          </select>
+          steps
+        </label>
         <label for="metronome">
           <input type="checkbox" id="metronome" checked />Metronome</label
         >
@@ -52,31 +65,31 @@
             <option value="">Select a pattern</option>
           </select>
         </label>
+        <input type="button" id="log-pattern" value="Log current pattern" />
       </div>
       <tone-step-sequencer rows="12"></tone-step-sequencer>
       <p>
         -- Game of Life sequencer --<br /><br />
-        This is a step sequencer that uses
+        This is a step sequencer that uses the algorithm of
         <a
           target="_blank"
           href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life"
           >John Conway's Game of Life</a
         >
         to generate evolving patterns.<br />
-        The first four rows are a sawtooth synth, the middle four are drum
+        The top four rows are a sawtooth synth, the middle four are drum
         samples and the bottom four are a sine synth.<br />
-        The next cell generation is produced every 4 steps. <br />Clicking on
-        cells will toggle their state, allowing to make live changes to the
-        sequence.<br /><br />
-        At first glance it might sound pretty random, but with some tweaking and
-        playing around with the patterns I find it interesting to listen to the
-        "natural" developments.<br />
-        For example, sometimes periods of calmness or little percussion will
+        Clicking on cells will toggle their state, allowing to make live changes
+        to the sequence.<br /><br />
+        At first glance it might sound pretty random, but after some playing
+        around I find it interesting to listen to "natural" developments.<br />
+        For example, sometimes periods of calmness or minimal percussion will
         start. Other times the whole "song" will die out on its own.<br />
-        Small changes with the mouse might introduce a gradual change of
-        melody/beat where you can still hear the existing patterns slowly
-        changing with every new bar, etc.<br /><br />
-        
+        Often, there will be gradual changes of melody or beat where you can
+        hear existing patterns repeating but slowly changing with every new bar.
+        This is especially noticeable with longer evolve intervals (16 and
+        above).<br /><br />
+
         Made by Gilad Mayani.<br />
         The sequencer was made with the
         <a target="_blank" href="https://tonejs.github.io/">Tone.js</a>

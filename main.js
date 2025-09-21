@@ -36,7 +36,7 @@
       const synthI = parseInt((detail.row / ls.sequencer.rows) * 3);
       const synth = synths[synthI];
       const synthRow = detail.row % (ls.sequencer.rows / 3);
-      if (synthI == 1) {
+      if (synth.name == "Players") {
         synth.player(synthRow).start(detail.time, 0, "16t");
       } else {
         synth.triggerAttackRelease(synthKeys[synthRow], "16t", detail.time);

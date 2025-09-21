@@ -13,27 +13,44 @@
       href="https://fonts.googleapis.com/css?family=Material+Icons&display=block"
     />
 
-    <script src="./Tone.js"></script>
-    <script src="./tone-ui.js"></script>
-    <script src="./components.js"></script>
+    <script src="./lib/Tone.js"></script>
+    <script src="./lib/tone-ui.js"></script>
+    <script src="./lib/components.js"></script>
+
+    <style>
+      #buttons > * {
+        margin-right: 10px;
+      }
+    </style>
   </head>
   <body>
     <div id="content">
       <tone-play-toggle></tone-play-toggle>
       <tone-slider
-        label="tempo"
+        label="Tempo"
         units="bpm"
         min="60"
         max="240"
-        value="120"
+        value="240"
       ></tone-slider>
-      <button id="clear">Clear</button>
-      <input type="checkbox" id="metronome" />
-      <label for="metronome">Metronome</label>
+      <div id="buttons">
+        <button id="clear">Clear</button>
+        <label for="metronome">
+          <input type="checkbox" id="metronome" checked />Metronome</label
+        >
+        <label for="patterns-select"
+          >Load Pattern:
+          <select id="patterns-select">
+            <option value="">Select a pattern</option>
+          </select>
+        </label>
+      </div>
       <tone-step-sequencer rows="12"></tone-step-sequencer>
     </div>
 
+    <script src="./utils.js"></script>
     <script src="./patterns.js"></script>
+    <script src="./pattern-loader.js"></script>
     <script src="./gol.js"></script>
     <script src="./main.js"></script>
   </body>

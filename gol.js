@@ -1,6 +1,9 @@
 (function () {
   const sequencer = document.querySelector("tone-step-sequencer");
   new Tone.Loop(onTick, "2n").start("2n");
+  for (let i = 0; i < 4; i++) {
+    loadPattern(patterns.glider, i * 4, i * 4);
+  }
 
   function onTick() {
     const matrix = sequencer._matrix.map((row) => row.slice());
@@ -42,5 +45,21 @@
       }
     }
     return count;
+  }
+
+  async function loadPattern(pattern, startX = 0, startY = 0) {
+    const rows = pattern
+      .trim()
+      .split("\n")
+      .map((r) => r.trim());
+    for (let y = 0; y < rows.length; y++) {
+      if (y + startY >= sequencer._matrix.length) continue;
+      for (let x = 0; x < rows[y].length; x++) {
+        if (x + startX >= sequencer._matrix[0].length) continue;
+        // console.log(`Setting cell ${y},${x} to ${rows[y][x]}`);
+        sequencer._matrix[y + startY][x + startX] = rows[y][x] === "X";
+      }
+    }
+    sequencer.requestUpdate();
   }
 })();

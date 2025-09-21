@@ -12,11 +12,11 @@ function initElements() {
     (e) => (Tone.Transport.bpm.value = parseFloat(e.target.value))
   );
 
-  const sequencer = document.querySelector("tone-step-sequencer");
-  for (let i = 0; i < sequencer.rows; i++) {
-    sequencer._matrix[i][i] = true;
-  }
-  sequencer.requestUpdate();
+  // const sequencer = document.querySelector("tone-step-sequencer");
+  // for (let i = 0; i < sequencer.rows; i++) {
+  //   sequencer._matrix[i][i] = true;
+  // }
+  // sequencer.requestUpdate();
 
   document.querySelector("#clear").addEventListener("click", () => {
     for (let y = 0; y < sequencer._matrix.length; y++) {

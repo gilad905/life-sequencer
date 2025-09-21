@@ -1,23 +1,26 @@
 (function () {
   const sequencer = document.querySelector("tone-step-sequencer");
-  new Tone.Loop(onTick, "2n").start("2n");
-  for (let i = 0; i < 4; i++) {
+  // loadPattern(patterns.glider);
+  for (let i = 0; i < 10; i++) {
     loadPattern(patterns.glider, i * 4, i * 4);
   }
+  new Tone.Loop(onTick, "2n").start("2n");
 
   function onTick() {
     const matrix = sequencer._matrix.map((row) => row.slice());
 
-    for (let y = 0; y < matrix.length; y++) {
-      for (let x = 0; x < matrix[y].length; x++) {
+    for (let x = 0; x < matrix.length; x++) {
+      for (let y = 0; y < matrix[x].length; y++) {
         const neighbors = countNeighbors(x, y);
-        // console.log(x, y, neighbors);
-        if (matrix[y][x]) {
+        // if (neighbors > 0) {
+        //   console.log(`Cell (${x},${y}) has ${neighbors} neighbors`);
+        // }
+        if (matrix[x][y]) {
           // Cell is alive
-          matrix[y][x] = neighbors === 2 || neighbors === 3;
+          matrix[x][y] = neighbors === 2 || neighbors === 3;
         } else {
           // Cell is dead
-          matrix[y][x] = neighbors === 3;
+          matrix[x][y] = neighbors === 3;
         }
       }
     }
@@ -29,18 +32,14 @@
   function countNeighbors(x, y) {
     const { _matrix } = sequencer;
     let count = 0;
-    for (let cY = y - 1; cY <= y + 1; cY++) {
-      for (let cX = x - 1; cX <= x + 1; cX++) {
-        if (cY === y && cX === x) continue; // Skip the cell itself
-        if (
-          cY >= 0 &&
-          cY < _matrix.length &&
-          cX >= 0 &&
-          cX < _matrix[0].length
-        ) {
-          if (_matrix[cY][cX]) {
-            count++;
-          }
+    for (let cX = -1; cX <= 1; cX++) {
+      for (let cY = -1; cY <= 1; cY++) {
+        if (cY === 0 && cX === 0) continue; // Skip the cell itself
+        const { x: newX, y: newY } = wrapAround(x + cX, y + cY);
+        if (newY < 0) newY += _matrix[0].length;
+        else if (newY >= _matrix[0].length) newY -= _matrix[0].length;
+        if (_matrix[newX][newY]) {
+          count++;
         }
       }
     }
@@ -48,18 +47,26 @@
   }
 
   async function loadPattern(pattern, startX = 0, startY = 0) {
+    const { _matrix } = sequencer;
     const rows = pattern
       .trim()
       .split("\n")
       .map((r) => r.trim());
     for (let y = 0; y < rows.length; y++) {
-      if (y + startY >= sequencer._matrix.length) continue;
       for (let x = 0; x < rows[y].length; x++) {
-        if (x + startX >= sequencer._matrix[0].length) continue;
-        // console.log(`Setting cell ${y},${x} to ${rows[y][x]}`);
-        sequencer._matrix[y + startY][x + startX] = rows[y][x] === "X";
+        const { x: newX, y: newY } = wrapAround(x + startX, y + startY);
+        _matrix[newX][newY] = rows[y][x] === "X";
       }
     }
     sequencer.requestUpdate();
+  }
+
+  function wrapAround(x, y) {
+    const { _matrix } = sequencer;
+    while (x < 0) x += _matrix.length;
+    while (x >= _matrix.length) x -= _matrix.length;
+    while (y < 0) y += _matrix[0].length;
+    while (y >= _matrix[0].length) y -= _matrix[0].length;
+    return { x, y };
   }
 })();

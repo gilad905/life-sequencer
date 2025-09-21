@@ -7,8 +7,8 @@ const patterns = {
     _____
 `,
   blinker: `
-    _____
-    _XXX_
-    _____
+    ___
+    XXX
+    ___
 `,
 };

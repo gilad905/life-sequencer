@@ -18,4 +18,4 @@ also using [Tone.js UI](https://github.com/Tonejs/ui) components and some [audio
 
 Source code is available on [GitHub](https://github.com/gilad905/life-sequencer).
 
-[Live Example](https://gilad905.github.io/life-sequencer).
+[Live Example](https://gilad905.github.io/life-sequencer)

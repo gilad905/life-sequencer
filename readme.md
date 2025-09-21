@@ -1,19 +1,20 @@
 ## Game of Life Sequencer
 
 This is a step sequencer that uses the algorithm of [John Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) to generate evolving patterns.
+The top four rows are a sawtooth synth, the middle four are drum samples and the bottom four are a sine synth.
+Clicking on cells will toggle their state, allowing to make live changes to the sequence.
 
-- The top four rows are a sawtooth synth.
-- The middle four rows are drum samples.
-- The bottom four rows are a sine synth.
-
-Clicking on cells will toggle their state, allowing live changes to the sequence.
-
-At first glance, it might sound random, but after some experimentation, you'll notice "natural" developments. For example, periods of calmness or minimal percussion may start, or the whole "song" might die out on its own. Often, there are gradual changes in melody or beat, where existing patterns repeat but slowly change with each new bar. This is especially noticeable with longer evolve intervals (16 and above).
+At first glance it might sound pretty random, but after some playing around I find it interesting to listen to "natural" developments.
+For example, sometimes periods of calmness or minimal percussion will start. Other times the whole "song" will die out on its own.
+Often, there will be gradual changes of melody or beat where you can hear existing patterns repeating but slowly changing with every new bar.
+This is especially noticeable with longer evolve intervals (16 and above).
 
 ---
 
 Made by Gilad Mayani.
 
-The sequencer was built with the [Tone.js](https://tonejs.github.io/) framework, also using [Tone.js UI](https://github.com/Tonejs/ui) components and some [audio samples](https://github.com/Tonejs/audio) from their examples.
+The sequencer was made using the [Tone.js](https://tonejs.github.io/) framework,
+also using [Tone.js UI](https://github.com/Tonejs/ui) components and some [audio samples](https://github.com/Tonejs/audio) from their examples.
 
 Source code is available on [GitHub](https://github.com/gilad905/life-sequencer).
+[Live Example](https://gilad905.github.io/life-sequencer).

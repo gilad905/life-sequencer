@@ -12,5 +12,11 @@
   }
 
   window.ls ??= {};
-  window.ls = { ...window.ls, sequencer, defaultVolume, wrapAround };
+  window.ls = {
+    ...window.ls,
+    //
+    sequencer,
+    defaultVolume,
+    wrapAround,
+  };
 })();

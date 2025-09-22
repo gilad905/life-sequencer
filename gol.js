@@ -1,15 +1,7 @@
 (function () {
-  const metronome = document.querySelector("#metronome");
   const evolve = document.querySelector("#evolve");
   const evolveEvery = document.querySelector("#evolve-every");
-  let tickCounter = 0;
 
-  const metronomeSynth = new Tone.Synth({
-    envelope: { release: 0.01 },
-    volume: ls.defaultVolume,
-  }).toDestination();
-
-  new Tone.Loop(onMetronomeTick, "2n").start(0);
   const evolveLoop = new Tone.Loop(onEvolveTick);
   evolveLoop.interval = `0:0:${parseInt(evolveEvery.value) * 2}`;
 
@@ -18,25 +10,11 @@
   });
 
   Tone.Transport.on("start", (time) => {
-    window.ls.applyModRow();
     evolveLoop.start(evolveLoop.interval);
   });
   Tone.Transport.on("stop", () => {
     evolveLoop.stop();
-    tickCounter = 0;
   });
-
-  function onMetronomeTick(time) {
-    const onFirstNote = tickCounter % 4 == 0;
-    if (metronome.checked) {
-      const octave = onFirstNote ? 7 : 6;
-      metronomeSynth.triggerAttackRelease(`C${octave}`, "16t", time);
-    }
-    if (onFirstNote && !evolve.checked) {
-      window.ls.applyModRow();
-    }
-    tickCounter++;
-  }
 
   function onEvolveTick() {
     if (!evolve.checked) return;

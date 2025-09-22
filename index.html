@@ -12,28 +12,24 @@
     <script src="./lib/tone-ui.js"></script>
     <script src="./lib/components.js"></script>
     <style id="sequencer-style">
-      /* .cell:nth-child(-n + 4):not([filled]),
-      .cell:nth-child(n + 10):not([filled]) {
-        background-color: #6ea8fe !important;
-      }
-      .cell:nth-child(7):not([filled]) {
-        background-color: #ea868f !important;
-      } */
-
+      /* injected into the sequencer shadow DOM */
       .cell {
         background-color: #aaa !important;
-      }
-      .cell:nth-child(-n + 4),
-      .cell:nth-child(n + 10) {
-        background-color: #198754 !important;
-        /* background-color: #6ea8fe !important; */
-      }
-      .cell:nth-child(7) {
-        background-color: #ea868f !important;
       }
       .cell[filled] {
         filter: brightness(50%) !important;
       }
+      .cell:nth-child(n + 5):nth-child(-n + 8) {
+        background-color: #75b798 !important;
+      }
+
+      /* with mod row: */
+      /* .cell:is(:nth-child(5), :nth-child(6), :nth-child(8), :nth-child(9)) {
+        background-color: #75b798 !important;
+      }
+      .cell:nth-child(7) {
+        background-color: #ea868f !important;
+      } */
     </style>
     <style>
       /* for the icons */
@@ -94,15 +90,13 @@
               >Evolve every</label
             >
             <select id="evolve-every" class="form-select">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="4">4</option>
-              <option value="8">8</option>
-              <option value="16" selected>16</option>
-              <option value="32">32</option>
-              <option value="64">64</option>
+              <option value="2">2 steps</option>
+              <option value="4">4 steps</option>
+              <option value="8">8 steps</option>
+              <option value="16" selected>16 steps = 1 bar</option>
+              <option value="32">32 steps = 2 bars</option>
+              <option value="64">64 steps = 4 bars</option>
             </select>
-            <span class="input-group-text">steps</span>
           </div>
 
           <div class="input-group" style="width: auto">
@@ -124,7 +118,7 @@
 
       <div class="row mb-4">
         <div class="col">
-          <tone-step-sequencer rows="13"></tone-step-sequencer>
+          <tone-step-sequencer rows="12"></tone-step-sequencer>
         </div>
       </div>
 
@@ -216,6 +210,7 @@
     <script src="./patterns.js"></script>
     <script src="./pattern-loader.js"></script>
     <script src="./gol.js"></script>
+    <script src="./metronome.js"></script>
     <script src="./main.js"></script>
   </body>
 </html>

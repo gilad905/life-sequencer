@@ -1,5 +1,6 @@
 (function () {
   const modRowI = 6;
+  const useModRow = false;
   const synthKeys = ["A3", "Db4", "E4", "Gb4"];
   const drumSamples = ["hihat", "kick", "snare", "tom1"];
   const drumLibs = ["4OP-FM", "Bongos"];
@@ -63,37 +64,39 @@
   }
 
   function onSequencerTrigger({ detail }) {
-    if (detail.row == modRowI) {
-      return;
-    } else {
-      if (detail.row > modRowI) {
+    let voiceRowCount = ls.sequencer.rows;
+    if (useModRow) {
+      voiceRowCount--;
+      if (detail.row == modRowI) {
+        return;
+      } else if (detail.row > modRowI) {
         detail.row--;
       }
-      const voiceI = parseInt(
-        (detail.row / (ls.sequencer.rows - 1)) * voices.length
-      );
-      const voice = voices[voiceI];
-      const voiceRow = detail.row % ((ls.sequencer.rows - 1) / voices.length);
-      if (voice.name == "Players") {
-        const drumIndex = voiceRow + currentDrumLib * 4;
-        voice.player(drumIndex).start(detail.time, 0, "16t");
-      } else {
-        voice.triggerAttackRelease(synthKeys[voiceRow], "16t", detail.time);
-      }
+    }
+
+    const voiceI = parseInt((detail.row / voiceRowCount) * voices.length);
+    const voice = voices[voiceI];
+    const voiceRow = detail.row % (voiceRowCount / voices.length);
+    if (voice.name == "Players") {
+      const drumIndex = voiceRow + currentDrumLib * 4;
+      voice.player(drumIndex).start(detail.time, 0, "16t");
+    } else {
+      voice.triggerAttackRelease(synthKeys[voiceRow], "16t", detail.time);
     }
   }
 
   function applyModRow() {
+    if (!useModRow) return;
     const { _matrix } = ls.sequencer;
     voices[0].set({
-      detune: _matrix[0][modRowI] ? 600 : 0,
-      oscillator: { type: _matrix[1][modRowI] ? "square" : "sine" },
+      detune: _matrix[1][modRowI] ? 1200 : 0,
+      oscillator: { type: _matrix[4][modRowI] ? "square" : "sine" },
     });
     voices[2].set({
-      detune: _matrix[2][modRowI] ? -600 : 0,
-      oscillator: { type: _matrix[3][modRowI] ? "triangle" : "sawtooth" },
+      detune: _matrix[7][modRowI] ? -1200 : 0,
+      oscillator: { type: _matrix[10][modRowI] ? "triangle" : "sawtooth" },
     });
-    currentDrumLib = _matrix[4][modRowI] ? 1 : 0;
+    currentDrumLib = _matrix[13][modRowI] ? 1 : 0;
   }
 
   window.ls ??= {};

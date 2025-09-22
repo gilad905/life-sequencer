@@ -4,17 +4,19 @@
   logPattern.addEventListener("click", logCurrentPattern);
 
   const patternsDropdown = document.querySelector("#patterns");
-  const startingPattern = "acorn";
-  loadPattern(patterns[startingPattern]);
+  loadPattern(patterns[Object.keys(patterns)[1]]);
   initDropdown();
 
   function initDropdown() {
-    for (const name in patterns) {
+    for (const patternName in patterns) {
       const item = document.createElement("li");
       item.classList.add("dropdown-item");
       item.role = "button";
-      item.textContent = name.replaceAll("_", " ");
-      item.dataset.patternName = name;
+      item.textContent = patternName.replaceAll("_", " ");
+      item.dataset.patternName = patternName;
+      if (patternName == "clear") {
+        item.classList.add("text-secondary");
+      }
       item.addEventListener("click", onPatternItemClick);
       document.querySelector("#patterns .dropdown-menu").appendChild(item);
     }

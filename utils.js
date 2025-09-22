@@ -1,6 +1,6 @@
 (function () {
   const sequencer = document.querySelector("tone-step-sequencer");
-  const defaultVolume = -24;
+  const defaultVolume = -12;
 
   function wrapAround(x, y) {
     const { _matrix } = sequencer;

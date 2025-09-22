@@ -3,16 +3,27 @@
   initSynths();
 
   function initElements() {
-    const toggler = document.querySelector("tone-play-toggle");
-    toggler.addEventListener("start", () => Tone.Transport.start());
-    toggler.addEventListener("stop", () => Tone.Transport.stop());
+    const playToggle = document.querySelector("#play-toggle");
+    playToggle.addEventListener("click", () => {
+      if (Tone.Transport.state === "started") {
+        Tone.Transport.stop();
+        playToggle.textContent = "▶";
+        playToggle.title = "Play";
+      } else {
+        Tone.Transport.start();
+        playToggle.textContent = "⏸";
+        playToggle.title = "Pause";
+      }
+    });
+    updateBpm();
+    document.querySelector("#bpm").addEventListener("input", updateBpm);
+  }
 
-    const slider = document.querySelector("tone-slider");
-    Tone.Transport.bpm.value = parseFloat(slider.value);
-    slider.addEventListener(
-      "input",
-      (e) => (Tone.Transport.bpm.value = parseFloat(e.target.value))
-    );
+  function updateBpm() {
+    const bpm = document.querySelector("#bpm");
+    Tone.Transport.bpm.value = parseFloat(bpm.value);
+    const bpmLabel = document.querySelector("label[for=bpm]");
+    bpmLabel.textContent = `Tempo: ${bpm.value} BPM`;
   }
 
   function initSynths() {

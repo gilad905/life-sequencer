@@ -1,25 +1,30 @@
 (function () {
   document.querySelector("#clear").addEventListener("click", clearSequencer);
-  document.querySelector("#log-pattern").addEventListener("click", logCurrentPattern);
+  const logPattern = document.querySelector("#log-pattern");
+  logPattern.addEventListener("click", logCurrentPattern);
 
-  initSelect();
-  loadPattern(patterns.acorn);
+  const patternsDropdown = document.querySelector("#patterns");
+  const startingPattern = "acorn";
+  loadPattern(patterns[startingPattern]);
+  initDropdown();
 
-  function initSelect() {
-    const select = document.querySelector("#patterns-select");
+  function initDropdown() {
     for (const name in patterns) {
-      const option = document.createElement("option");
-      option.value = name;
-      option.textContent = name.replaceAll("_", " ");
-      document.querySelector("#patterns-select").appendChild(option);
+      const item = document.createElement("li");
+      item.classList.add("dropdown-item");
+      item.role = "button";
+      item.textContent = name.replaceAll("_", " ");
+      item.dataset.patternName = name;
+      item.addEventListener("click", onPatternItemClick);
+      document.querySelector("#patterns .dropdown-menu").appendChild(item);
     }
+  }
 
-    select.addEventListener("change", (e) => {
-      if (!e.target.value) return;
-      clearSequencer();
-      loadPattern(patterns[e.target.value]);
-      e.target.value = "";
-    });
+  function onPatternItemClick(e) {
+    clearSequencer();
+    loadPattern(patterns[e.target.dataset.patternName]);
+    patternsDropdown.querySelector("button").textContent =
+      e.target.textContent + " ";
   }
 
   function clearSequencer() {

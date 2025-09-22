@@ -15,7 +15,7 @@
       item.textContent = patternName.replaceAll("_", " ");
       item.dataset.patternName = patternName;
       if (patternName == "clear") {
-        item.classList.add("text-secondary");
+        item.classList.add("text-danger");
       }
       item.addEventListener("click", onPatternItemClick);
       document.querySelector("#patterns .dropdown-menu").appendChild(item);

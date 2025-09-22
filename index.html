@@ -11,6 +11,30 @@
     <script src="./lib/Tone.js"></script>
     <script src="./lib/tone-ui.js"></script>
     <script src="./lib/components.js"></script>
+    <style id="sequencer-style">
+      /* .cell:nth-child(-n + 4):not([filled]),
+      .cell:nth-child(n + 10):not([filled]) {
+        background-color: #6ea8fe !important;
+      }
+      .cell:nth-child(7):not([filled]) {
+        background-color: #ea868f !important;
+      } */
+
+      .cell {
+        background-color: #aaa !important;
+      }
+      .cell:nth-child(-n + 4),
+      .cell:nth-child(n + 10) {
+        background-color: #198754 !important;
+        /* background-color: #6ea8fe !important; */
+      }
+      .cell:nth-child(7) {
+        background-color: #ea868f !important;
+      }
+      .cell[filled] {
+        filter: brightness(50%) !important;
+      }
+    </style>
     <style>
       /* for the icons */
       #play-toggle {
@@ -100,7 +124,7 @@
 
       <div class="row mb-4">
         <div class="col">
-          <tone-step-sequencer rows="12"></tone-step-sequencer>
+          <tone-step-sequencer rows="13"></tone-step-sequencer>
         </div>
       </div>
 

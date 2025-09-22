@@ -10,31 +10,38 @@
   }).toDestination();
 
   new Tone.Loop(onMetronomeTick, "2n").start(0);
-  const loop = new Tone.Loop(onTick);
-  loop.interval = `0:0:${parseInt(evolveEvery.value) * 2}`;
+  const evolveLoop = new Tone.Loop(onEvolveTick);
+  evolveLoop.interval = `0:0:${parseInt(evolveEvery.value) * 2}`;
 
   evolveEvery.addEventListener("change", (e) => {
-    loop.interval = `0:0:${parseInt(e.target.value) * 2}`;
+    evolveLoop.interval = `0:0:${parseInt(e.target.value) * 2}`;
   });
 
   Tone.Transport.on("start", (time) => {
-    loop.start(loop.interval);
+    window.ls.applyModRow();
+    evolveLoop.start(evolveLoop.interval);
   });
   Tone.Transport.on("stop", () => {
-    loop.stop();
+    evolveLoop.stop();
     tickCounter = 0;
   });
 
   function onMetronomeTick(time) {
+    const onFirstNote = tickCounter % 4 == 0;
     if (metronome.checked) {
-      const octave = 6 + (tickCounter % 4 == 0 ? 1 : 0);
+      const octave = onFirstNote ? 7 : 6;
       metronomeSynth.triggerAttackRelease(`C${octave}`, "16t", time);
+    }
+    if (onFirstNote && !evolve.checked) {
+      window.ls.applyModRow();
     }
     tickCounter++;
   }
 
-  function onTick() {
+  function onEvolveTick() {
     if (!evolve.checked) return;
+
+    window.ls.applyModRow();
     const matrix = ls.sequencer._matrix.map((row) => row.slice());
 
     for (let x = 0; x < matrix.length; x++) {

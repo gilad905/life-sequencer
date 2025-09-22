@@ -1,13 +1,18 @@
 (function () {
+  const isDev = location.origin === "file://";
   document.querySelector("#clear").addEventListener("click", clearSequencer);
   const logPattern = document.querySelector("#log-pattern");
   logPattern.addEventListener("click", logCurrentPattern);
 
-  const patternsDropdown = document.querySelector("#patterns");
-  loadPattern(patterns[Object.keys(patterns)[1]]);
-  initDropdown();
+  if (isDev) {
+    loadPattern(patterns.diagonal_line);
+  } else {
+    loadPattern(patterns[Object.keys(patterns)[1]]);
+  }
+  delete patterns.diagonal_line;
+  initDropdown(patterns);
 
-  function initDropdown() {
+  function initDropdown(patterns) {
     for (const patternName in patterns) {
       const item = document.createElement("li");
       item.classList.add("dropdown-item");
@@ -25,7 +30,7 @@
   function onPatternItemClick(e) {
     clearSequencer();
     loadPattern(patterns[e.target.dataset.patternName]);
-    patternsDropdown.querySelector("button").textContent =
+    document.querySelector("#patterns button").textContent =
       e.target.textContent + " ";
   }
 

@@ -1,27 +1,24 @@
 (function () {
+  const synthKeys = ["A3", "Db4", "E4", "Gb4"];
+  const drumSamples = ["hihat", "kick", "snare", "tom1"];
+  const drumLibs = ["4OP-FM"];
+  const waveTypes = ["sine", "square", "triangle", "sawtooth"];
+
   const noteDuration = "16t";
   const modRowI = 6;
-  const toRecord = true;
-  // const toRecord = false;
   const useModRow = false;
-  const synthKeys = ["Gb3", "A3", "B3", "Db4", "E4", "Gb4"];
-  const drumSamples = ["hihat", "kick", "snare", "tom1"];
-  const drumLibs = ["4OP-FM", "Bongos"];
-  // const drumLibs = ["4OP-FM", "KPR77"];
+
+  const urls = getSampleUrls();
   let currentDrumLib = 0;
 
-  const voices = initVoices();
+  const players = initPlayers();
   ls.sequencer.addEventListener("trigger", onSequencerTrigger);
 
-  if (toRecord) {
-    Tone.Transport.on("start", recordSynths);
-  }
-
-  function initVoices() {
+  function initPlayers() {
     const voices = [
       new Tone.PolySynth(Tone.Synth, { oscillator: { type: "sine" } }),
       new Tone.Players({
-        baseUrl: `https://tonejs.github.io/audio/drum-samples/`,
+        baseUrl: "/assets/",
         urls: [
           ...drumSamples.map((d) => `${drumLibs[0]}/${d}.mp3`),
           ...drumSamples.map((d) => `${drumLibs[1]}/${d}.mp3`),
@@ -50,43 +47,40 @@
       }
     }
 
-    const voiceI = parseInt((detail.row / voiceRowCount) * voices.length);
-    const voice = voices[voiceI];
-    const voiceRow = detail.row % (voiceRowCount / voices.length);
-    if (voice.name == "Players") {
-      const drumIndex = voiceRow + currentDrumLib * 4;
-      voice.player(drumIndex).start(detail.time, 0, noteDuration);
-    } else {
-      voice.triggerAttackRelease(
-        synthKeys[voiceRow],
-        noteDuration,
-        detail.time
-      );
-    }
+    const voiceI = parseInt((detail.row / voiceRowCount) * players.length);
+    const voice = players[voiceI];
+    const voiceRow = detail.row % (voiceRowCount / players.length);
+    const drumIndex = voiceRow + currentDrumLib * 4;
+    voice.player(drumIndex).start(detail.time, 0, noteDuration);
   }
 
   function applyModRow() {
     if (!useModRow) return;
     const { _matrix } = ls.sequencer;
-    voices[0].set({
+    players[0].set({
       detune: _matrix[1][modRowI] ? 1200 : 0,
       oscillator: { type: _matrix[4][modRowI] ? "square" : "sine" },
     });
-    voices[2].set({
+    players[2].set({
       detune: _matrix[7][modRowI] ? -1200 : 0,
       oscillator: { type: _matrix[10][modRowI] ? "triangle" : "sawtooth" },
     });
     currentDrumLib = _matrix[13][modRowI] ? 1 : 0;
   }
 
-  async function recordSynths() {
-    for (const voice of voices) {
-      if (voice.name == "Players") continue;
-      for (const key of synthKeys) {
-        await ls.recordSynth(voice, key);
-        return;
+  function getSampleUrls() {
+    const urls = {};
+    for (const lib of drumLibs) {
+      for (const sample of drumSamples) {
+        urls[`${lib}-${sample}`] = `${lib}/${sample}.mp3`;
       }
     }
+    for (const type of waveTypes) {
+      for (const key of synthKeys) {
+        urls[`${type}-${key}`] = `synth-samples/${type}-${key}.mp4`;
+      }
+    }
+    return urls;
   }
 
   window.ls ??= {};

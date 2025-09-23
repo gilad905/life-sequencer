@@ -1,10 +1,9 @@
 (function () {
-  const isDev = location.origin === "file://";
   document.querySelector("#clear").addEventListener("click", clearSequencer);
   const logPattern = document.querySelector("#log-pattern");
   logPattern.addEventListener("click", logCurrentPattern);
 
-  if (isDev) {
+  if (ls.isDev) {
     // loadPattern(patterns.diagonal_line);
   } else {
     loadPattern(patterns[Object.keys(patterns)[1]]);

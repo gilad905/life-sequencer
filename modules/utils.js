@@ -1,4 +1,5 @@
 (function () {
+  const isDev = location.origin === "file://";
   const sequencer = document.querySelector("tone-step-sequencer");
   const defaultVolume = -12;
 
@@ -15,6 +16,7 @@
   window.ls = {
     ...window.ls,
     //
+    isDev,
     sequencer,
     defaultVolume,
     wrapAround,

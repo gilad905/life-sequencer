@@ -4,54 +4,32 @@
   const drumLibs = ["4OP-FM"];
   const waveTypes = ["sine", "square", "triangle", "sawtooth"];
 
-  const noteDuration = "16t";
-  const modRowI = 6;
   const useModRow = false;
-
-  const urls = getSampleUrls();
-  let currentDrumLib = 0;
+  const modRowI = 6;
 
   const players = initPlayers();
   ls.sequencer.addEventListener("trigger", onSequencerTrigger);
 
   function initPlayers() {
-    const voices = [
-      new Tone.PolySynth(Tone.Synth, { oscillator: { type: "sine" } }),
-      new Tone.Players({
-        baseUrl: "/assets/",
-        urls: [
-          ...drumSamples.map((d) => `${drumLibs[0]}/${d}.mp3`),
-          ...drumSamples.map((d) => `${drumLibs[1]}/${d}.mp3`),
-        ],
-        fadeOut: "64n",
-      }),
-      new Tone.PolySynth(Tone.Synth, { oscillator: { type: "sawtooth" } }),
-    ];
-
-    for (const voice of voices) {
-      voice.volume.value = ls.defaultVolume;
-      voice.toDestination();
-    }
-
-    return voices;
+    const urls = Object.values(getSampleUrls());
+    const players = new Tone.Players({
+      baseUrl: "./assets/",
+      volume: ls.defaultVolume,
+      urls,
+    });
+    players.toDestination();
+    return players;
   }
 
   function onSequencerTrigger({ detail }) {
-    let voiceRowCount = ls.sequencer.rows;
     if (useModRow) {
-      voiceRowCount--;
       if (detail.row == modRowI) {
         return;
       } else if (detail.row > modRowI) {
         detail.row--;
       }
     }
-
-    const voiceI = parseInt((detail.row / voiceRowCount) * players.length);
-    const voice = players[voiceI];
-    const voiceRow = detail.row % (voiceRowCount / players.length);
-    const drumIndex = voiceRow + currentDrumLib * 4;
-    voice.player(drumIndex).start(detail.time, 0, noteDuration);
+    players.player(detail.row).start(detail.time);
   }
 
   function applyModRow() {

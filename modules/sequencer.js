@@ -11,11 +11,16 @@
   ls.sequencer.addEventListener("trigger", onSequencerTrigger);
 
   function initPlayers() {
-    const urls = Object.values(getSampleUrls());
+    const urls = getSampleUrls();
+    const flatUrls = [
+      Object.values(urls.synths.sine),
+      Object.values(urls.drums[drumLibs[0]]),
+      Object.values(urls.synths.square),
+    ].flat();
     const players = new Tone.Players({
-      baseUrl: "./assets/",
+      baseUrl: "https://gilad905.github.io/life-sequencer/assets/",
       volume: ls.defaultVolume,
-      urls,
+      urls: flatUrls,
     });
     players.toDestination();
     return players;
@@ -47,15 +52,17 @@
   }
 
   function getSampleUrls() {
-    const urls = {};
+    const urls = { drums: {}, synths: {} };
     for (const lib of drumLibs) {
+      urls.drums[lib] = {};
       for (const sample of drumSamples) {
-        urls[`${lib}-${sample}`] = `${lib}/${sample}.mp3`;
+        urls.drums[lib][sample] = `${lib}/${sample}.mp3`;
       }
     }
     for (const type of waveTypes) {
+      urls.synths[type] = {};
       for (const key of synthKeys) {
-        urls[`${type}-${key}`] = `synth-samples/${type}-${key}.mp4`;
+        urls.synths[type][key] = `synth-samples/${type}-${key}.mp4`;
       }
     }
     return urls;

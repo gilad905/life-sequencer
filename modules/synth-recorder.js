@@ -6,7 +6,7 @@ async function recordSynths() {
   const keys = ["Gb3", "A3", "B3", "Db4", "E4", "Gb4"];
   const types = ["square", "sine", "triangle", "sawtooth"];
   const recorder = new Tone.Recorder();
-  recorder.mimeType = "audio/mp4";
+  recorder.mimeType = "audio/wav";
 
   console.log("starting synth recording");
 
@@ -18,17 +18,19 @@ async function recordSynths() {
     for (const key of keys) {
       await new Promise((resolve) => {
         synth.onsilence = resolve;
-        recorder.start();
         synth.triggerAttackRelease(key, "16t");
+        recorder.start();
       });
       const recording = await recorder.stop();
       const url = URL.createObjectURL(recording);
       const anchor = document.createElement("a");
       anchor.style.display = "block";
-      anchor.download = `${type}-${key}.mp4`;
+      anchor.download = `${type}-${key}.wav`;
       anchor.href = url;
       anchor.innerText = anchor.download;
       document.body.prepend(anchor);
+
+      return;
     }
   }
   console.log("synth recording done");
@@ -52,5 +54,5 @@ function showDrumLinks() {
   }
 }
 
-showDrumLinks();
-// Tone.Transport.on("start", recordSynths);
+// showDrumLinks();
+Tone.Transport.on("start", recordSynths);

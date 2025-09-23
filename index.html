@@ -68,13 +68,6 @@
 
       <div class="row mb-3">
         <div class="col d-flex flex-wrap align-items-center gap-3">
-          <button id="clear" class="btn btn-outline-danger">Clear</button>
-
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="metronome" />
-            <label class="form-check-label" for="metronome">Metronome</label>
-          </div>
-
           <div class="input-group" style="width: auto">
             <div class="input-group-text">
               <input
@@ -95,7 +88,7 @@
             </select>
           </div>
 
-          <div class="input-group" style="width: auto">
+          <div class="input-group" style="width: auto; min-width: 18em">
             <label class="input-group-text">Load pattern</label>
             <div id="patterns" class="dropdown">
               <button
@@ -104,10 +97,18 @@
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                Select a pattern
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               </button>
               <ul class="dropdown-menu"></ul>
             </div>
+          </div>
+
+          <button id="clear" class="btn btn-outline-danger">Clear</button>
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="metronome" />
+            <label class="form-check-label" for="metronome">Metronome</label>
           </div>
         </div>
       </div>

@@ -30,8 +30,8 @@
   function onPatternItemClick(e) {
     clearSequencer();
     loadPattern(patterns[e.target.dataset.patternName]);
-    document.querySelector("#patterns button").textContent =
-      e.target.textContent + " ";
+    document.querySelector("#patterns .dropdown-toggle").innerHTML =
+      e.target.textContent + "&nbsp;&nbsp;";
   }
 
   function clearSequencer() {

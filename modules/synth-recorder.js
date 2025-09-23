@@ -1,18 +1,26 @@
 (function () {
-  const anchor = document.createElement("a");
   const recorder = new Tone.Recorder();
   recorder.mimeType = "audio/mp4";
 
-  async function recordSynth(synth, note, duration) {
+  async function recordSynth(_synth, note) {
+    // synth.connect(recorder);
     const synth = new Tone.Synth().connect(recorder);
     recorder.start();
-    synth.triggerAttackRelease(note, duration);
-    await new Promise((resolve) => setTimeout(resolve, duration * 1000));
+    synth.onsilence = console.log;
+    // synth.onsilence += console.log;
+    // synth.onsilence(console.log);
+    synth.triggerAttackRelease(note, "16t");
+    await new Promise((resolve) => setTimeout(resolve, 500));
     const recording = await recorder.stop();
+    await new Promise((resolve) => setTimeout(resolve, 500));
     const url = URL.createObjectURL(recording);
-    anchor.download = `${synth.type}-${note}.mp4`;
+    const { type } = synth.get("oscillator").oscillator;
+    const anchor = document.createElement("a");
+    anchor.style.display = "block";
+    anchor.download = `${type}-${note}.mp4`;
     anchor.href = url;
-    anchor.click();
+    anchor.innerText = `Download ${anchor.download}`;
+    document.body.prepend(anchor);
   }
 
   window.ls ??= {};

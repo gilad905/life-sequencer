@@ -1,7 +1,10 @@
 (function () {
+  const noteDuration = "16t";
   const modRowI = 6;
+  const toRecord = true;
+  // const toRecord = false;
   const useModRow = false;
-  const synthKeys = ["A3", "Db4", "E4", "Gb4"];
+  const synthKeys = ["Gb3", "A3", "B3", "Db4", "E4", "Gb4"];
   const drumSamples = ["hihat", "kick", "snare", "tom1"];
   const drumLibs = ["4OP-FM", "Bongos"];
   // const drumLibs = ["4OP-FM", "KPR77"];
@@ -9,6 +12,10 @@
 
   const voices = initVoices();
   ls.sequencer.addEventListener("trigger", onSequencerTrigger);
+
+  if (toRecord) {
+    Tone.Transport.on("start", recordSynths);
+  }
 
   function initVoices() {
     const voices = [
@@ -48,9 +55,13 @@
     const voiceRow = detail.row % (voiceRowCount / voices.length);
     if (voice.name == "Players") {
       const drumIndex = voiceRow + currentDrumLib * 4;
-      voice.player(drumIndex).start(detail.time, 0, "16t");
+      voice.player(drumIndex).start(detail.time, 0, noteDuration);
     } else {
-      voice.triggerAttackRelease(synthKeys[voiceRow], "16t", detail.time);
+      voice.triggerAttackRelease(
+        synthKeys[voiceRow],
+        noteDuration,
+        detail.time
+      );
     }
   }
 
@@ -66,6 +77,16 @@
       oscillator: { type: _matrix[10][modRowI] ? "triangle" : "sawtooth" },
     });
     currentDrumLib = _matrix[13][modRowI] ? 1 : 0;
+  }
+
+  async function recordSynths() {
+    for (const voice of voices) {
+      if (voice.name == "Players") continue;
+      for (const key of synthKeys) {
+        await ls.recordSynth(voice, key);
+        return;
+      }
+    }
   }
 
   window.ls ??= {};

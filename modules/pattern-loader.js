@@ -5,7 +5,7 @@
   logPattern.addEventListener("click", logCurrentPattern);
 
   if (isDev) {
-    loadPattern(patterns.diagonal_line);
+    // loadPattern(patterns.diagonal_line);
   } else {
     loadPattern(patterns[Object.keys(patterns)[1]]);
   }

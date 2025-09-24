@@ -7,23 +7,26 @@
     barCounter = 0;
   });
 
-  ls.sequencer.addEventListener("step", function (e) {
-    if (e.detail.index == 0) {
+  ls.addStepAction((time, index) => {
+    if (index == 0) {
       barCounter++;
-    }
-    if (!evolveCbx.checked || barCounter == 1) {
-      // don't evolve when just starting
-      return;
+      if (!evolveCbx.checked || barCounter == 1) {
+        // don't evolve when just started
+        return;
+      }
     }
 
     const evolveInterval = parseInt(evolveEvery.value);
-    const toEvolve = e.detail.index % evolveInterval === 0;
-    // console.log({ toEvolve, index: e.detail.index, evolveInterval });
+    if (evolveInterval > ls.sequencer._matrix.length) {
+      // todo - evolve every n bars
+      return;
+    }
+    const toEvolve = index % evolveInterval === 0;
     if (toEvolve) {
-      // console.log("evolving");
+      console.debug(`evolving at ${barCounter}:${index}`);
       evolve();
     }
-  });
+  }, 2);
 
   function evolve() {
     const matrix = ls.sequencer._matrix.map((row) => row.slice());

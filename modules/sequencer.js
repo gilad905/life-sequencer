@@ -1,16 +1,11 @@
 (function () {
-  const useModRow = true;
-  const modRow = 6;
-  const drumRows = useModRow ? [4, 5, 7, 8] : [4, 5, 6, 7];
   const voices = initVoices();
   const currentVoices = [];
+  updateCurrentVoices();
 
-  initStepEvent();
-  addSequencerClasses();
-
-  ls.sequencer.addEventListener("step", (e) => {
-    if (e.detail.index === 0) {
-      applyModRow();
+  ls.addStepAction((time, index) => {
+    if (index == 0 && ls.useModRow) {
+      updateCurrentVoices();
     }
   });
 
@@ -59,23 +54,22 @@
   function onSequencerTrigger({ detail }) {
     const rowI = ls.sequencer._matrix[0].length - detail.row - 1;
     let voiceI = rowI;
-    if (useModRow) {
-      if (rowI == modRow) {
+    if (ls.useModRow) {
+      if (rowI == ls.modRow) {
         return;
-      } else if (voiceI > modRow) {
+      } else if (voiceI > ls.modRow) {
         voiceI--;
       }
     }
-    if (drumRows.includes(rowI)) {
+    if (ls.drumRows.includes(rowI)) {
       currentVoices[voiceI].start(detail.time, 0, "16t");
     } else {
       currentVoices[voiceI].start(detail.time);
     }
   }
 
-  function applyModRow() {
-    // console.log("applying mod row");
-    if (!useModRow) return;
+  function updateCurrentVoices() {
+    console.debug("updating current voices");
 
     currentVoices.length = 0;
 
@@ -94,56 +88,24 @@
   }
 
   function getModBit([colStart, colEnd]) {
+    if (!ls.useModRow) return 0;
     for (let col = colStart; col <= colEnd; col++) {
-      if (ls.sequencer._matrix[col][modRow]) return 1;
+      if (ls.sequencer._matrix[col][ls.modRow]) return 1;
     }
     return 0;
 
     // Alternative: majority
     // let countOn = 0;
     // for (let col = colStart; col <= colEnd; col++) {
-    //   if (ls.sequencer._matrix[col][modRowI]) countOn++;
+    //   if (ls.sequencer._matrix[col][ls.modRowI]) countOn++;
     // }
     // const countOff = colEnd - colStart + 1 - countOn;
     // return countOn > countOff ? 1 : 0;
-  }
-
-  function addSequencerClasses() {
-    const { shadowRoot } = ls.sequencer;
-    function addRowClasses(row, className) {
-      const cells = shadowRoot.querySelectorAll(`.cell:nth-child(${row + 1})`);
-      for (const cell of cells) {
-        cell.classList.add(className);
-      }
-    }
-
-    for (const row of drumRows) {
-      addRowClasses(row, "drums");
-    }
-
-    if (useModRow) {
-      addRowClasses(modRow, "mod-row");
-      for (const section of Object.values(ls.modSections).slice(0, -1)) {
-        const endCell = shadowRoot.querySelector(
-          `.column:nth-child(${section[1] + 1}) .cell:nth-child(${modRow + 1})`
-        );
-        endCell.classList.add("mod-section-end");
-      }
-    }
   }
 
   function createPlayer(opts) {
     const player = new Tone.Player(opts).toDestination();
     player._url = opts.url;
     return player;
-  }
-
-  function initStepEvent() {
-    ls.sequencer._sequencer.callback = (time, index) => {
-      ls.sequencer.dispatchEvent(
-        new CustomEvent("step", { detail: { time, index } })
-      );
-      ls.sequencer._tick(time, index);
-    };
   }
 })();

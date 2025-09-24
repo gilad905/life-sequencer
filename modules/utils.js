@@ -8,8 +8,12 @@
     metronome: -20,
   };
 
+  const useModRow = document.querySelector("tone-step-sequencer").rows === 13;
+  const modRow = 6;
+  const drumRows = useModRow ? [4, 5, 7, 8] : [4, 5, 6, 7];
+
   const keyGroups = [
-    ["Gb4", "E4", "Db4", "B3"],
+    ["Gb4", "E4", "Db4", useModRow ? "B3" : "A3"],
     ["Db4", "B3", "A3", "Gb3"],
   ];
   const waveTypes = {
@@ -40,6 +44,9 @@
     ...window.ls,
     //
     volumes,
+    useModRow,
+    modRow,
+    drumRows,
     keyGroups,
     waveTypes,
     drumSamples,

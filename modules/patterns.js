@@ -91,6 +91,20 @@ window.ls.patterns = {
     __XXXX__________
     ________________
   `,
+  gilad: `
+    __XXX__XXX_X____
+    _XX_____X__X____
+    _X______X__X____
+    _X_XXX__X__X____
+    _X__X___X__X____
+    _XXXX__XXX_XXXX_
+    ________________
+    __XX_____XXXX___
+    __XX_____X__XX__
+    _X__X____X___X__
+    _XXXX____X__XX__
+    _X__X____XXXX___
+  `,
   tester_line: `
     X
     _X

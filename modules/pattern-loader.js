@@ -8,7 +8,9 @@
 
   function initDropdown(patterns) {
     for (const patternName in patterns) {
-      if (!ls.isDev && patternName == "diagonal_line") continue;
+      if (!ls.isDev && patternName.startsWith("tester_")) {
+        continue;
+      }
       const item = document.createElement("li");
       item.classList.add("dropdown-item");
       item.role = "button";

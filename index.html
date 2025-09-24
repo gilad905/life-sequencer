@@ -13,18 +13,24 @@
     <script src="./lib/components.js"></script>
     <style id="sequencer-style">
       /* injected into the sequencer shadow DOM */
+      .cell:focus {
+        outline: none !important;
+      }
+
       .cell {
         background-color: #aaa !important;
       }
 
-      /* without mod row: */
-      /* .cell:nth-child(n + 5):nth-child(-n + 8) { */
-      /* with mod row: */
-      .cell:is(:nth-child(5), :nth-child(6), :nth-child(8), :nth-child(9)) {
+      .cell.drums {
         background-color: #75b798 !important;
       }
-      .cell:nth-child(7) {
+
+      .cell.mod-row {
         background-color: #ea868f !important;
+      }
+
+      .cell.mod-section-end {
+        box-shadow: 4px 0 0 0 black;
       }
 
       .cell[filled] {
@@ -83,8 +89,8 @@
               <option value="4">4 steps (1/4 bar)</option>
               <option value="8">8 steps (1/2 bar)</option>
               <option value="16" selected>1 bar</option>
-              <option value="32">2 bars</option>
-              <option value="64">4 bars</option>
+              <!-- <option value="32">2 bars</option>
+              <option value="64">4 bars</option> -->
             </select>
           </div>
 

@@ -1,24 +1,14 @@
 (function () {
-  const keyGroups = [
-    ["Gb4", "E4", "Db4", "B3"],
-    ["Db4", "B3", "A3", "Gb3"],
-  ];
-  const waveTypes = {
-    lead: ["sawtooth", "square"],
-    bass: ["sine", "triangle"],
-  };
-  const drumSamples = ["tom1", "snare", "kick", "hihat"];
-  const drumLibs = ["4OP-FM", "Bongos"];
-
   const useModRow = true;
-  const modRowI = 6;
+  const modRow = 6;
+  const drumRows = useModRow ? [4, 5, 7, 8] : [4, 5, 6, 7];
   const voices = initVoices();
   const currentVoices = [];
 
-  const sequencerEvent = new EventTarget();
-  initSequencerEvent();
+  initStepEvent();
+  addSequencerClasses();
 
-  sequencerEvent.addEventListener("step", (e) => {
+  ls.sequencer.addEventListener("step", (e) => {
     if (e.detail.index === 0) {
       applyModRow();
     }
@@ -30,9 +20,9 @@
     const baseUrl = "https://gilad905.github.io/life-sequencer/assets";
     const voices = { drums: [] };
 
-    for (const lib of drumLibs) {
+    for (const lib of ls.drumLibs) {
       const libVoice = [];
-      for (const sample of drumSamples) {
+      for (const sample of ls.drumSamples) {
         const player = createPlayer({
           url: `${baseUrl}/${lib}/${sample}.mp3`,
           volume: ls.volumes.drums,
@@ -43,12 +33,12 @@
       voices.drums.push(libVoice);
     }
 
-    for (const synthType of Object.keys(waveTypes)) {
+    for (const synthType of Object.keys(ls.waveTypes)) {
       voices[synthType] = [];
       const volume = ls.volumes[synthType];
-      for (const waveType of waveTypes[synthType]) {
+      for (const waveType of ls.waveTypes[synthType]) {
         const waveTypeVoices = [];
-        for (const keyGroup of keyGroups) {
+        for (const keyGroup of ls.keyGroups) {
           const groupVoice = [];
           for (const key of keyGroup) {
             const url = `${baseUrl}/synth-samples/${waveType}-${key}.wav`;
@@ -67,46 +57,45 @@
   }
 
   function onSequencerTrigger({ detail }) {
+    const rowI = ls.sequencer._matrix[0].length - detail.row - 1;
+    let voiceI = rowI;
     if (useModRow) {
-      if (detail.row == modRowI) {
+      if (rowI == modRow) {
         return;
-      } else if (detail.row > modRowI) {
-        detail.row--;
+      } else if (voiceI > modRow) {
+        voiceI--;
       }
     }
-    const rowI = currentVoices.length - detail.row - 1;
-    const isDrums = rowI > 3 && rowI < 8;
-    if (isDrums) {
-      currentVoices[rowI].start(detail.time, 0, "16t");
+    if (drumRows.includes(rowI)) {
+      currentVoices[voiceI].start(detail.time, 0, "16t");
     } else {
-      currentVoices[rowI].start(detail.time);
+      currentVoices[voiceI].start(detail.time);
     }
-    // console.log("trigger", rowI, isDrums, currentVoices[rowI]._url);
   }
 
   function applyModRow() {
-    // console.log("Applying mod row");
+    // console.log("applying mod row");
     if (!useModRow) return;
 
     currentVoices.length = 0;
 
-    const leadWaveType = getModBit(0, 2);
-    const leadKeyGroup = getModBit(3, 5);
+    const leadWaveType = getModBit(ls.modSections.leadWave);
+    const leadKeyGroup = getModBit(ls.modSections.leadKey);
     currentVoices.push(...voices.lead[leadWaveType][leadKeyGroup]);
 
-    const drumLib = getModBit(6, 9);
+    const drumLib = getModBit(ls.modSections.drums);
     currentVoices.push(...voices.drums[drumLib]);
 
-    const bassWaveType = getModBit(10, 12);
-    const bassKeyGroup = getModBit(13, 15);
+    const bassWaveType = getModBit(ls.modSections.bassWave);
+    const bassKeyGroup = getModBit(ls.modSections.bassKey);
     currentVoices.push(...voices.bass[bassWaveType][bassKeyGroup]);
 
     // console.log(currentVoices.map((v) => v._url).join("\n"));
   }
 
-  function getModBit(colStart, colEnd) {
+  function getModBit([colStart, colEnd]) {
     for (let col = colStart; col <= colEnd; col++) {
-      if (ls.sequencer._matrix[col][modRowI]) return 1;
+      if (ls.sequencer._matrix[col][modRow]) return 1;
     }
     return 0;
 
@@ -119,22 +108,42 @@
     // return countOn > countOff ? 1 : 0;
   }
 
+  function addSequencerClasses() {
+    const { shadowRoot } = ls.sequencer;
+    function addRowClasses(row, className) {
+      const cells = shadowRoot.querySelectorAll(`.cell:nth-child(${row + 1})`);
+      for (const cell of cells) {
+        cell.classList.add(className);
+      }
+    }
+
+    for (const row of drumRows) {
+      addRowClasses(row, "drums");
+    }
+
+    if (useModRow) {
+      addRowClasses(modRow, "mod-row");
+      for (const section of Object.values(ls.modSections).slice(0, -1)) {
+        const endCell = shadowRoot.querySelector(
+          `.column:nth-child(${section[1] + 1}) .cell:nth-child(${modRow + 1})`
+        );
+        endCell.classList.add("mod-section-end");
+      }
+    }
+  }
+
   function createPlayer(opts) {
     const player = new Tone.Player(opts).toDestination();
     player._url = opts.url;
     return player;
   }
 
-  function initSequencerEvent() {
+  function initStepEvent() {
     ls.sequencer._sequencer.callback = (time, index) => {
-      sequencerEvent.dispatchEvent(
+      ls.sequencer.dispatchEvent(
         new CustomEvent("step", { detail: { time, index } })
       );
       ls.sequencer._tick(time, index);
     };
   }
-
-  window.ls ??= {};
-  window.ls.applyModRow = applyModRow;
-  window.ls.sequencerEvent = sequencerEvent;
 })();

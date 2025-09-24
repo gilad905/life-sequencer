@@ -6,7 +6,7 @@
     volume: ls.volumes.metronome,
   }).toDestination();
 
-  ls.sequencerEvent.addEventListener("step", (e) => {
+  ls.sequencer.addEventListener("step", (e) => {
     if (metronomeCbx.checked) {
       if (e.detail.index % 4 === 0) {
         const onFirstNote = e.detail.index === 0;

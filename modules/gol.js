@@ -1,24 +1,31 @@
 (function () {
-  const evolve = document.querySelector("#evolve");
+  const evolveCbx = document.querySelector("#evolve");
   const evolveEvery = document.querySelector("#evolve-every");
+  let barCounter = 0;
 
-  const evolveLoop = new Tone.Loop(onEvolveTick);
-  evolveLoop.interval = `0:0:${parseInt(evolveEvery.value) * 2}`;
-
-  evolveEvery.addEventListener("change", (e) => {
-    evolveLoop.interval = `0:0:${parseInt(e.target.value) * 2}`;
-  });
-
-  Tone.Transport.on("start", (time) => {
-    evolveLoop.start(evolveLoop.interval);
-  });
   Tone.Transport.on("stop", () => {
-    evolveLoop.stop();
+    barCounter = 0;
   });
 
-  function onEvolveTick() {
-    if (!evolve.checked) return;
+  ls.sequencer.addEventListener("step", function (e) {
+    if (e.detail.index == 0) {
+      barCounter++;
+    }
+    if (!evolveCbx.checked || barCounter == 1) {
+      // don't evolve when just starting
+      return;
+    }
 
+    const evolveInterval = parseInt(evolveEvery.value);
+    const toEvolve = e.detail.index % evolveInterval === 0;
+    // console.log({ toEvolve, index: e.detail.index, evolveInterval });
+    if (toEvolve) {
+      // console.log("evolving");
+      evolve();
+    }
+  });
+
+  function evolve() {
     const matrix = ls.sequencer._matrix.map((row) => row.slice());
 
     for (let x = 0; x < matrix.length; x++) {

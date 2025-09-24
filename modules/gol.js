@@ -19,15 +19,11 @@
   function onEvolveTick() {
     if (!evolve.checked) return;
 
-    window.ls.applyModRow();
     const matrix = ls.sequencer._matrix.map((row) => row.slice());
 
     for (let x = 0; x < matrix.length; x++) {
       for (let y = 0; y < matrix[x].length; y++) {
         const neighbors = countNeighbors(x, y);
-        // if (neighbors > 0) {
-        //   console.log(`Cell (${x},${y}) has ${neighbors} neighbors`);
-        // }
         if (matrix[x][y]) {
           // Cell is alive
           matrix[x][y] = neighbors === 2 || neighbors === 3;

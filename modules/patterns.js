@@ -1,4 +1,5 @@
-const patterns = {
+window.ls ??= {};
+window.ls.patterns = {
   clear: ``,
   acorn: `
     _
@@ -97,12 +98,12 @@ const patterns = {
     ___X
     ____X
     _____X
-    ______X
+    _
     _______X
     ________X
     _________X
     __________X
     ___________X
+    ____________X
     `,
-    // ____________X
 };

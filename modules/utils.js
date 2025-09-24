@@ -2,10 +2,10 @@
   const isDev = location.origin === "file://";
   const sequencer = document.querySelector("tone-step-sequencer");
   const volumes = {
-    topSynth: -16,
+    lead: -16,
     drums: -12,
-    bassSynth: -12,
-    metronome: -17,
+    bass: -12,
+    metronome: -20,
   };
 
   function wrapAround(x, y) {

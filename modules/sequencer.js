@@ -1,95 +1,140 @@
 (function () {
-  const synthKeys = ["A3", "Db4", "E4", "Gb4"];
+  const keyGroups = [
+    ["Gb4", "E4", "Db4", "B3"],
+    ["Db4", "B3", "A3", "Gb3"],
+  ];
   const waveTypes = {
-    top: ["sawtooth", "square"],
+    lead: ["sawtooth", "square"],
     bass: ["sine", "triangle"],
   };
-  const drumSamples = ["hihat", "kick", "snare", "tom1"];
-  const drumLibs = ["4OP-FM"];
-  let currentDrumLib = drumLibs[0];
-  let currentTopSynth = waveTypes.top[0];
-  let currentBassSynth = waveTypes.bass[0];
+  const drumSamples = ["tom1", "snare", "kick", "hihat"];
+  const drumLibs = ["4OP-FM", "Bongos"];
 
-  const useModRow = false;
+  const useModRow = true;
   const modRowI = 6;
+  const voices = initVoices();
+  const currentVoices = [];
 
-  const players = initPlayers();
+  const sequencerEvent = new EventTarget();
+  initSequencerEvent();
+
+  sequencerEvent.addEventListener("step", (e) => {
+    if (e.detail.index === 0) {
+      applyModRow();
+    }
+  });
+
   ls.sequencer.addEventListener("trigger", onSequencerTrigger);
 
-  function initPlayers() {
-    const baseUrl = "https://gilad905.github.io/life-sequencer/assets/";
-
-    const players = { drums: {}, synths: {} };
+  function initVoices() {
+    const baseUrl = "https://gilad905.github.io/life-sequencer/assets";
+    const voices = { drums: [] };
 
     for (const lib of drumLibs) {
-      players.drums[lib] = {};
+      const libVoice = [];
       for (const sample of drumSamples) {
-        const url = `${baseUrl}${lib}/${sample}.mp3`;
-        players.drums[lib][sample] = new Tone.Player({
-          url,
+        const player = createPlayer({
+          url: `${baseUrl}/${lib}/${sample}.mp3`,
           volume: ls.volumes.drums,
           fadeOut: "64n",
-        }).toDestination();
+        });
+        libVoice.push(player);
       }
+      voices.drums.push(libVoice);
     }
 
     for (const synthType of Object.keys(waveTypes)) {
-      players.synths[synthType] = {};
+      voices[synthType] = [];
+      const volume = ls.volumes[synthType];
       for (const waveType of waveTypes[synthType]) {
-        players.synths[synthType][waveType] = {};
-        for (const key of synthKeys) {
-          const url = `${baseUrl}synth-samples/${waveType}-${key}.wav`;
-          players.synths[synthType][waveType][key] = new Tone.Player({
-            url,
-            volume: ls.volumes[`${synthType}Synth`],
-          }).toDestination();
+        const waveTypeVoices = [];
+        for (const keyGroup of keyGroups) {
+          const groupVoice = [];
+          for (const key of keyGroup) {
+            const url = `${baseUrl}/synth-samples/${waveType}-${key}.wav`;
+            const allKeys = waveTypeVoices.flat();
+            let player = allKeys.find((p) => p._url == url);
+            player ??= createPlayer({ url, volume });
+            groupVoice.push(player);
+          }
+          waveTypeVoices.push(groupVoice);
         }
+        voices[synthType].push(waveTypeVoices);
       }
     }
 
-    return players;
+    return voices;
   }
 
   function onSequencerTrigger({ detail }) {
-    let voiceRowCount = ls.sequencer.rows;
     if (useModRow) {
-      voiceRowCount--;
       if (detail.row == modRowI) {
         return;
       } else if (detail.row > modRowI) {
         detail.row--;
       }
     }
-
-    const voiceI = 2 - parseInt((detail.row / voiceRowCount) * 3);
-    const voiceRow = detail.row % (voiceRowCount / 3);
-
-    if (voiceI == 0) {
-      const player = players.synths.top[currentTopSynth][synthKeys[voiceRow]];
-      player.start(detail.time);
-    } else if (voiceI == 2) {
-      const player = players.synths.bass[currentBassSynth][synthKeys[voiceRow]];
-      player.start(detail.time);
-    } else if (voiceI == 1) {
-      const player = players.drums[currentDrumLib][drumSamples[voiceRow]];
-      player.start(detail.time, 0, "16t");
+    const rowI = currentVoices.length - detail.row - 1;
+    const isDrums = rowI > 3 && rowI < 8;
+    if (isDrums) {
+      currentVoices[rowI].start(detail.time, 0, "16t");
+    } else {
+      currentVoices[rowI].start(detail.time);
     }
+    // console.log("trigger", rowI, isDrums, currentVoices[rowI]._url);
   }
 
   function applyModRow() {
+    // console.log("Applying mod row");
     if (!useModRow) return;
-    const { _matrix } = ls.sequencer;
-    players[0].set({
-      detune: _matrix[1][modRowI] ? 1200 : 0,
-      oscillator: { type: _matrix[4][modRowI] ? "square" : "sine" },
-    });
-    players[2].set({
-      detune: _matrix[7][modRowI] ? -1200 : 0,
-      oscillator: { type: _matrix[10][modRowI] ? "triangle" : "sawtooth" },
-    });
-    currentDrumLib = _matrix[13][modRowI] ? 1 : 0;
+
+    currentVoices.length = 0;
+
+    const leadWaveType = getModBit(0, 2);
+    const leadKeyGroup = getModBit(3, 5);
+    currentVoices.push(...voices.lead[leadWaveType][leadKeyGroup]);
+
+    const drumLib = getModBit(6, 9);
+    currentVoices.push(...voices.drums[drumLib]);
+
+    const bassWaveType = getModBit(10, 12);
+    const bassKeyGroup = getModBit(13, 15);
+    currentVoices.push(...voices.bass[bassWaveType][bassKeyGroup]);
+
+    // console.log(currentVoices.map((v) => v._url).join("\n"));
+  }
+
+  function getModBit(colStart, colEnd) {
+    for (let col = colStart; col <= colEnd; col++) {
+      if (ls.sequencer._matrix[col][modRowI]) return 1;
+    }
+    return 0;
+
+    // Alternative: majority
+    // let countOn = 0;
+    // for (let col = colStart; col <= colEnd; col++) {
+    //   if (ls.sequencer._matrix[col][modRowI]) countOn++;
+    // }
+    // const countOff = colEnd - colStart + 1 - countOn;
+    // return countOn > countOff ? 1 : 0;
+  }
+
+  function createPlayer(opts) {
+    const player = new Tone.Player(opts).toDestination();
+    player._url = opts.url;
+    return player;
+  }
+
+  function initSequencerEvent() {
+    ls.sequencer._sequencer.callback = (time, index) => {
+      sequencerEvent.dispatchEvent(
+        new CustomEvent("step", { detail: { time, index } })
+      );
+      ls.sequencer._tick(time, index);
+    };
   }
 
   window.ls ??= {};
-  window.ls = { ...window.ls, applyModRow };
+  window.ls.applyModRow = applyModRow;
+  window.ls.sequencerEvent = sequencerEvent;
 })();

@@ -3,16 +3,12 @@
   const logPattern = document.querySelector("#log-pattern");
   logPattern.addEventListener("click", logCurrentPattern);
 
-  // if (ls.isDev) {
-  //   loadPattern(patterns.diagonal_line);
-  // } else {
-  loadPattern(patterns[Object.keys(patterns)[1]]);
-  // }
-  delete patterns.diagonal_line;
-  initDropdown(patterns);
+  loadPattern(ls.patterns[Object.keys(ls.patterns)[1]]);
+  initDropdown(ls.patterns);
 
   function initDropdown(patterns) {
     for (const patternName in patterns) {
+      if (!ls.isDev && patternName == "diagonal_line") continue;
       const item = document.createElement("li");
       item.classList.add("dropdown-item");
       item.role = "button";
@@ -28,7 +24,7 @@
 
   function onPatternItemClick(e) {
     clearSequencer();
-    loadPattern(patterns[e.target.dataset.patternName]);
+    loadPattern(ls.patterns[e.target.dataset.patternName]);
     document.querySelector("#patterns .dropdown-toggle").innerHTML =
       e.target.textContent + "&nbsp;&nbsp;";
   }
@@ -64,4 +60,7 @@
     }
     console.log(lines.join("\n"));
   }
+
+  window.ls ??= {};
+  window.ls = { ...window.ls, loadPattern, clearSequencer };
 })();

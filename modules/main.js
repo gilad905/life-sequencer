@@ -2,6 +2,16 @@
   initControls();
   injectSequencerStyle();
 
+  // if (ls.isDev) {
+  //   ls.clearSequencer();
+  //   ls.loadPattern(ls.patterns.diagonal_line);
+  //   // const bpm = document.querySelector("#bpm");
+  //   // bpm.value = 60;
+  //   // updateBpm();
+  //   const evolve = document.querySelector("#evolve");
+  //   evolve.checked = false;
+  // }
+
   function initControls() {
     const playToggle = document.querySelector("#play-toggle");
     playToggle.addEventListener("click", () => {

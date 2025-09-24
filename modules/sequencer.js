@@ -21,6 +21,7 @@
       baseUrl: "https://gilad905.github.io/life-sequencer/assets/",
       volume: ls.defaultVolume,
       urls: flatUrls,
+      // fadeOut: "64n",
     });
     players.toDestination();
     return players;
@@ -34,7 +35,8 @@
         detail.row--;
       }
     }
-    players.player(detail.row).start(detail.time);
+    // players.player(detail.row).start(detail.time);
+    players.player(detail.row).start(detail.time, 0, "16t");
   }
 
   function applyModRow() {

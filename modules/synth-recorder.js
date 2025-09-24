@@ -144,6 +144,6 @@
 
   if (ls.isDev) {
     // showDrumLinks();
-    Tone.Transport.on("start", recordSynths);
+    // Tone.Transport.on("start", recordSynths);
   }
 })();

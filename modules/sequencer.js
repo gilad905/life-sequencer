@@ -1,8 +1,8 @@
 (function () {
   const synthKeys = ["A3", "Db4", "E4", "Gb4"];
   const drumSamples = ["hihat", "kick", "snare", "tom1"];
-  const drumLibs = ["4OP-FM"];
   const waveTypes = ["sine", "square", "triangle", "sawtooth"];
+  const drumLibs = ["4OP-FM"];
 
   const useModRow = false;
   const modRowI = 6;
@@ -64,7 +64,7 @@
     for (const type of waveTypes) {
       urls.synths[type] = {};
       for (const key of synthKeys) {
-        urls.synths[type][key] = `synth-samples/${type}-${key}.mp4`;
+        urls.synths[type][key] = `synth-samples/${type}-${key}.wav`;
       }
     }
     return urls;

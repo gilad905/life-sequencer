@@ -3,11 +3,11 @@
   const logPattern = document.querySelector("#log-pattern");
   logPattern.addEventListener("click", logCurrentPattern);
 
-  if (ls.isDev) {
-    loadPattern(patterns.diagonal_line);
-  } else {
-    loadPattern(patterns[Object.keys(patterns)[1]]);
-  }
+  // if (ls.isDev) {
+  //   loadPattern(patterns.diagonal_line);
+  // } else {
+  loadPattern(patterns[Object.keys(patterns)[1]]);
+  // }
   delete patterns.diagonal_line;
   initDropdown(patterns);
 

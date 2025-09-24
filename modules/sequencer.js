@@ -1,8 +1,14 @@
 (function () {
   const synthKeys = ["A3", "Db4", "E4", "Gb4"];
+  const waveTypes = {
+    top: ["sawtooth", "square"],
+    bass: ["sine", "triangle"],
+  };
   const drumSamples = ["hihat", "kick", "snare", "tom1"];
-  const waveTypes = ["sine", "square", "triangle", "sawtooth"];
   const drumLibs = ["4OP-FM"];
+  let currentDrumLib = drumLibs[0];
+  let currentTopSynth = waveTypes.top[0];
+  let currentBassSynth = waveTypes.bass[0];
 
   const useModRow = false;
   const modRowI = 6;
@@ -11,32 +17,63 @@
   ls.sequencer.addEventListener("trigger", onSequencerTrigger);
 
   function initPlayers() {
-    const urls = getSampleUrls();
-    const flatUrls = [
-      Object.values(urls.synths.sine),
-      Object.values(urls.drums[drumLibs[0]]),
-      Object.values(urls.synths.square),
-    ].flat();
-    const players = new Tone.Players({
-      baseUrl: "https://gilad905.github.io/life-sequencer/assets/",
-      volume: ls.defaultVolume,
-      urls: flatUrls,
-      // fadeOut: "64n",
-    });
-    players.toDestination();
+    const baseUrl = "https://gilad905.github.io/life-sequencer/assets/";
+
+    const players = { drums: {}, synths: {} };
+
+    for (const lib of drumLibs) {
+      players.drums[lib] = {};
+      for (const sample of drumSamples) {
+        const url = `${baseUrl}${lib}/${sample}.mp3`;
+        players.drums[lib][sample] = new Tone.Player({
+          url,
+          volume: ls.volumes.drums,
+          fadeOut: "64n",
+        }).toDestination();
+      }
+    }
+
+    for (const synthType of Object.keys(waveTypes)) {
+      players.synths[synthType] = {};
+      for (const waveType of waveTypes[synthType]) {
+        players.synths[synthType][waveType] = {};
+        for (const key of synthKeys) {
+          const url = `${baseUrl}synth-samples/${waveType}-${key}.wav`;
+          players.synths[synthType][waveType][key] = new Tone.Player({
+            url,
+            volume: ls.volumes[`${synthType}Synth`],
+          }).toDestination();
+        }
+      }
+    }
+
     return players;
   }
 
   function onSequencerTrigger({ detail }) {
+    let voiceRowCount = ls.sequencer.rows;
     if (useModRow) {
+      voiceRowCount--;
       if (detail.row == modRowI) {
         return;
       } else if (detail.row > modRowI) {
         detail.row--;
       }
     }
-    // players.player(detail.row).start(detail.time);
-    players.player(detail.row).start(detail.time, 0, "16t");
+
+    const voiceI = 2 - parseInt((detail.row / voiceRowCount) * 3);
+    const voiceRow = detail.row % (voiceRowCount / 3);
+
+    if (voiceI == 0) {
+      const player = players.synths.top[currentTopSynth][synthKeys[voiceRow]];
+      player.start(detail.time);
+    } else if (voiceI == 2) {
+      const player = players.synths.bass[currentBassSynth][synthKeys[voiceRow]];
+      player.start(detail.time);
+    } else if (voiceI == 1) {
+      const player = players.drums[currentDrumLib][drumSamples[voiceRow]];
+      player.start(detail.time, 0, "16t");
+    }
   }
 
   function applyModRow() {
@@ -51,23 +88,6 @@
       oscillator: { type: _matrix[10][modRowI] ? "triangle" : "sawtooth" },
     });
     currentDrumLib = _matrix[13][modRowI] ? 1 : 0;
-  }
-
-  function getSampleUrls() {
-    const urls = { drums: {}, synths: {} };
-    for (const lib of drumLibs) {
-      urls.drums[lib] = {};
-      for (const sample of drumSamples) {
-        urls.drums[lib][sample] = `${lib}/${sample}.mp3`;
-      }
-    }
-    for (const type of waveTypes) {
-      urls.synths[type] = {};
-      for (const key of synthKeys) {
-        urls.synths[type][key] = `synth-samples/${type}-${key}.wav`;
-      }
-    }
-    return urls;
   }
 
   window.ls ??= {};

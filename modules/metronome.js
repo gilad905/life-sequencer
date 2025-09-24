@@ -4,7 +4,7 @@
 
   const synth = new Tone.Synth({
     envelope: { release: 0.01 },
-    volume: ls.defaultVolume - 5,
+    volume: ls.volumes.metronome,
   }).toDestination();
   let tickCounter = 0;
 

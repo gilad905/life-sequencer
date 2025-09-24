@@ -1,7 +1,12 @@
 (function () {
   const isDev = location.origin === "file://";
   const sequencer = document.querySelector("tone-step-sequencer");
-  const defaultVolume = -12;
+  const volumes = {
+    topSynth: -16,
+    drums: -12,
+    bassSynth: -12,
+    metronome: -17,
+  };
 
   function wrapAround(x, y) {
     const { _matrix } = sequencer;
@@ -16,9 +21,9 @@
   window.ls = {
     ...window.ls,
     //
+    volumes,
     isDev,
     sequencer,
-    defaultVolume,
     wrapAround,
   };
 })();

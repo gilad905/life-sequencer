@@ -2,6 +2,10 @@
   const evolveCbx = document.querySelector("#evolve");
   const evolveEvery = document.querySelector("#evolve-every");
   let barCounter = 0;
+  let evolveSteps, evolveBars;
+
+  updateEvolveState();
+  evolveEvery.addEventListener("change", updateEvolveState);
 
   Tone.Transport.on("stop", () => {
     barCounter = 0;
@@ -16,12 +20,13 @@
       }
     }
 
-    const evolveInterval = parseInt(evolveEvery.value);
-    if (evolveInterval > ls.sequencer._matrix.length) {
-      // todo - evolve every n bars
-      return;
+    let toEvolve = false;
+    if (evolveBars > 1) {
+      toEvolve = index == 0 && barCounter % evolveBars === 0;
+    } else {
+      toEvolve = index % evolveSteps === 0;
     }
-    const toEvolve = index % evolveInterval === 0;
+
     if (toEvolve) {
       console.debug(`evolving at ${barCounter}:${index}`);
       evolve();
@@ -63,5 +68,10 @@
       }
     }
     return count;
+  }
+
+  function updateEvolveState() {
+    evolveSteps = parseInt(evolveEvery.value);
+    evolveBars = evolveSteps / ls.sequencer._matrix.length;
   }
 })();

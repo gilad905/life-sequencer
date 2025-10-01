@@ -4,10 +4,7 @@
   let barCounter = 0;
   let evolveSteps, evolveBars;
 
-  updateEvolveState();
-  evolveEvery.addEventListener("change", updateEvolveState);
-
-  Tone.Transport.on("stop", () => {
+  Tone.getTransport().on("stop", () => {
     barCounter = 0;
   });
 
@@ -87,4 +84,7 @@
     evolveSteps = parseInt(evolveEvery.value);
     evolveBars = evolveSteps / ls.sequencer._matrix.length;
   }
+
+  window.ls ??= {};
+  window.ls.updateEvolveState = updateEvolveState;
 })();

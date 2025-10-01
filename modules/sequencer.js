@@ -19,7 +19,7 @@
     for (const lib of ls.drumLibs) {
       const libVoice = [];
       for (const sample of ls.drumSamples) {
-        const player = createPlayer({
+        const player = ls.createPlayer({
           url: `${ls.assetsUrl}/${lib}/${sample}.mp3`,
           volume: ls.volumes.drums,
           fadeOut: "64n",
@@ -40,7 +40,7 @@
             const url = `${ls.assetsUrl}/synth-samples/${waveType}-${key}.wav`;
             const allKeys = waveTypeVoices.flat();
             let player = allKeys.find((p) => p._url == url);
-            player ??= createPlayer({ url, volume });
+            player ??= ls.createPlayer({ url, volume });
             groupVoice.push(player);
           }
           waveTypeVoices.push(groupVoice);
@@ -102,11 +102,5 @@
     // }
     // const countOff = colEnd - colStart + 1 - countOn;
     // return countOn > countOff ? 1 : 0;
-  }
-
-  function createPlayer(opts) {
-    const player = new Tone.Player(opts).toDestination();
-    player._url = opts.url;
-    return player;
   }
 })();

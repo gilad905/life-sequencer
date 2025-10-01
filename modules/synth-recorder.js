@@ -6,7 +6,6 @@
 
     const synth = new Tone.Synth({
       envelope: { release: 0.01 },
-      volume: ls.volumes.metronome,
     }).connect(recorder);
     for (const key of keys) {
       recorder.start();
@@ -48,7 +47,7 @@
   async function recordKey(synth, key, recorder) {
     await new Promise((resolve) => {
       synth.onsilence = resolve;
-      // Tone.Transport.scheduleOnce((time) => {
+      // Tone.getTransport().scheduleOnce((time) => {
       recorder.start();
       // }, "+0.050");
       synth.triggerAttackRelease(key, "16t");
@@ -164,7 +163,7 @@
 
   if (ls.isDev) {
     // showDrumLinks();
-    // Tone.Transport.on("start", recordSynths);
-    // Tone.Transport.on("start", recordMetronome);
+    // Tone.getTransport().on("start", recordSynths);
+    // Tone.getTransport().on("start", recordMetronome);
   }
 })();

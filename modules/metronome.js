@@ -4,11 +4,11 @@
   const players = [];
 
   for (const key of keys) {
-    const player = new Tone.Player({
+    const player = ls.createPlayer({
       url: `${ls.assetsUrl}/metronome-samples/metronome-${key}.wav`,
       volume: ls.volumes.metronome,
       fadeOut: "64n",
-    }).toDestination();
+    });
     players.push(player);
   }
 

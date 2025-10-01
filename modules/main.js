@@ -1,7 +1,18 @@
 (function () {
+  const defaultState = getStateParams();
+  const queryParams = importQueryParams();
+  if (!queryParams.has("matrix")) {
+    ls.loadPattern(ls.patterns[Object.keys(ls.patterns)[1]]);
+  }
   initControls();
   addSequencerClasses();
   injectSequencerStyle();
+
+  ls.allPlayersLoaded().then(() => {
+    console.debug("all players loaded");
+    document.querySelector("#play-toggle").disabled = false;
+    setPlayButtonState(true);
+  });
 
   // if (ls.isDev) {
   //   ls.clearSequencer();
@@ -12,6 +23,30 @@
   //   const evolve = document.querySelector("#evolve");
   //   evolve.checked = false;
   // }
+
+  function importQueryParams() {
+    const params = new URLSearchParams(location.search);
+    if (params.has("matrix")) {
+      ls.matrixSerializer.importToken(params.get("matrix"));
+    }
+    if (params.has("evolve")) {
+      const evolve = document.querySelector("#evolve");
+      evolve.checked = params.get("evolve") === "1";
+    }
+    if (params.has("metronome")) {
+      const metronome = document.querySelector("#metronome");
+      metronome.checked = params.get("metronome") === "1";
+    }
+    if (params.has("bpm")) {
+      const bpm = document.querySelector("#bpm");
+      bpm.value = params.get("bpm");
+    }
+    if (params.has("evolveEvery")) {
+      const evolveEvery = document.querySelector("#evolve-every");
+      evolveEvery.value = params.get("evolveEvery");
+    }
+    return params;
+  }
 
   function addSequencerClasses() {
     const { shadowRoot } = ls.sequencer;
@@ -41,19 +76,71 @@
 
   function initControls() {
     const playToggle = document.querySelector("#play-toggle");
-    playToggle.addEventListener("click", () => {
-      if (Tone.Transport.state === "started") {
-        Tone.Transport.stop();
-        playToggle.textContent = "▶";
-        playToggle.title = "Play";
-      } else {
-        Tone.Transport.start();
-        playToggle.textContent = "⏸";
-        playToggle.title = "Pause";
-      }
-    });
+    playToggle.addEventListener("click", onPlayToggleClick);
+
     updateBpm();
     document.querySelector("#bpm").addEventListener("input", updateBpm);
+
+    ls.updateEvolveState();
+    const evolveEvery = document.querySelector("#evolve-every");
+    evolveEvery.addEventListener("change", ls.updateEvolveState);
+
+    const copyLinkButton = document.querySelector("#copy-link");
+    copyLinkButton._popover = new bootstrap.Popover(copyLinkButton);
+    copyLinkButton.addEventListener("click", onCopyLinkClick);
+  }
+
+  function onCopyLinkClick(ev) {
+    const params = getStateParams();
+    for (const [key, value] of defaultState) {
+      if (params.get(key) === value) {
+        params.delete(key);
+      }
+    }
+
+    let url = `${location.origin}${location.pathname}`;
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+
+    navigator.clipboard.writeText(url);
+    ev.target._popover.show();
+    setTimeout(() => ev.target._popover.hide(), 1000);
+  }
+
+  function onPlayToggleClick() {
+    if (Tone.getTransport().state === "started") {
+      Tone.getTransport().stop();
+      setPlayButtonState(true);
+    } else {
+      Tone.getTransport().start();
+      setPlayButtonState(false);
+    }
+  }
+
+  function setPlayButtonState(toPlay) {
+    const playToggle = document.querySelector("#play-toggle");
+    if (toPlay) {
+      playToggle.textContent = "▶";
+      playToggle.title = "Play";
+    } else {
+      playToggle.textContent = "⏸";
+      playToggle.title = "Pause";
+    }
+  }
+
+  function getStateParams() {
+    function cbxValue(id) {
+      return document.querySelector(`#${id}`).checked ? "1" : "0";
+    }
+    const token = ls.matrixSerializer.getToken();
+    const params = new URLSearchParams(location.search);
+    params.set("matrix", token);
+    params.set("evolve", cbxValue("evolve"));
+    params.set("metronome", cbxValue("metronome"));
+    params.set("bpm", document.querySelector("#bpm").value);
+    params.set("evolveEvery", document.querySelector("#evolve-every").value);
+    return params;
   }
 
   function injectSequencerStyle() {
@@ -64,7 +151,7 @@
 
   function updateBpm() {
     const bpm = document.querySelector("#bpm");
-    Tone.Transport.bpm.value = parseFloat(bpm.value);
+    Tone.getTransport().bpm.value = parseFloat(bpm.value);
     const bpmLabel = document.querySelector("label[for=bpm]");
     bpmLabel.textContent = `Tempo: ${bpm.value} BPM`;
   }

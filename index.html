@@ -42,6 +42,10 @@
       #play-toggle {
         font-family: Arial;
       }
+
+      #play-toggle:not([disabled]) :is(.spinner-border, [role="status"]) {
+        display: none;
+      }
     </style>
   </head>
   <body>
@@ -53,13 +57,18 @@
             class="btn btn-primary"
             id="play-toggle"
             title="Play"
+            disabled
           >
-            ▶
+            <span
+              class="spinner-border spinner-border-sm"
+              aria-hidden="true"
+            ></span>
+            <span role="status">&nbsp;Loading audio...</span>
           </button>
         </div>
       </div>
       <div class="row mb-3 align-items-center">
-        <div class="col">
+        <div class="col col-12 col-sm-6">
           <label for="bpm" class="form-label">Tempo</label>
           <input
             type="range"
@@ -70,10 +79,8 @@
             value="240"
           />
         </div>
-      </div>
 
-      <div class="row mb-3">
-        <div class="col d-flex flex-wrap align-items-center gap-3">
+        <div class="col col-12 col-sm-6">
           <div class="input-group" style="width: auto">
             <div class="input-group-text">
               <input
@@ -94,7 +101,12 @@
               <option value="64">4 bars</option>
             </select>
           </div>
+        </div>
+      </div>
 
+      <div class="row mb-3">
+        <div class="col d-flex flex-wrap align-items-center gap-3">
+          <button id="clear" class="btn btn-outline-danger">Clear</button>
           <div class="input-group" style="width: auto; min-width: 18em">
             <label class="input-group-text">Load pattern</label>
             <div id="patterns" class="dropdown">
@@ -111,19 +123,27 @@
             </div>
           </div>
 
-          <button id="clear" class="btn btn-outline-danger">Clear</button>
-
           <div class="form-check">
             <input class="form-check-input" type="checkbox" id="metronome" />
             <label class="form-check-label" for="metronome">Metronome</label>
           </div>
+
+          <button
+            id="copy-link"
+            type="button"
+            class="btn btn-primary"
+            data-bs-custom-class="fw-semibold text-success-emphasis bg-success-subtle border-success-subtle"
+            data-bs-content="Link copied to clipboard!"
+          >
+            Copy link
+          </button>
         </div>
       </div>
 
       <div class="row mb-4">
         <div class="col">
-          <tone-step-sequencer rows="13"></tone-step-sequencer>
-          <!-- <tone-step-sequencer rows="12"></tone-step-sequencer> -->
+          <!-- <tone-step-sequencer rows="13"></tone-step-sequencer> -->
+          <tone-step-sequencer rows="12"></tone-step-sequencer>
         </div>
       </div>
 
@@ -214,6 +234,8 @@
     </div>
 
     <script src="./modules/utils.js"></script>
+    <script src="./modules/matrix-serializer.mjs"></script>
+    <script src="./modules/players-loader.mjs"></script>
     <script src="./modules/synth-recorder.js"></script>
     <script src="./modules/patterns.js"></script>
     <script src="./modules/pattern-loader.js"></script>

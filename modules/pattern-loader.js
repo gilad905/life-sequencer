@@ -3,7 +3,6 @@
   const logPattern = document.querySelector("#log-pattern");
   logPattern.addEventListener("click", logCurrentPattern);
 
-  loadPattern(ls.patterns[Object.keys(ls.patterns)[1]]);
   initDropdown(ls.patterns);
 
   function initDropdown(patterns) {

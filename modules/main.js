@@ -1,15 +1,12 @@
 (function () {
   const defaultState = getStateParams();
-  const queryParams = importQueryParams();
-  if (!queryParams.has("matrix")) {
-    ls.loadPattern(ls.patterns[Object.keys(ls.patterns)[1]]);
-  }
+  importQueryParams();
   initControls();
   addSequencerClasses();
   injectSequencerStyle();
 
   ls.allPlayersLoaded().then(() => {
-    console.debug("all players loaded");
+    // console.debug("all players loaded");
     document.querySelector("#play-toggle").disabled = false;
     setPlayButtonState(true);
   });
@@ -26,9 +23,14 @@
 
   function importQueryParams() {
     const params = new URLSearchParams(location.search);
+
     if (params.has("matrix")) {
       ls.matrixSerializer.importToken(params.get("matrix"));
+    } else {
+      const defaultPattern = ls.patterns[Object.keys(ls.patterns)[1]];
+      ls.loadPattern(defaultPattern);
     }
+
     if (params.has("evolve")) {
       const evolve = document.querySelector("#evolve");
       evolve.checked = params.get("evolve") === "1";
@@ -98,6 +100,8 @@
       }
     }
 
+    const token = ls.matrixSerializer.getToken();
+    params.set("matrix", token);
     let url = `${location.origin}${location.pathname}`;
     if (params.toString()) {
       url += `?${params.toString()}`;
@@ -133,9 +137,7 @@
     function cbxValue(id) {
       return document.querySelector(`#${id}`).checked ? "1" : "0";
     }
-    const token = ls.matrixSerializer.getToken();
     const params = new URLSearchParams(location.search);
-    params.set("matrix", token);
     params.set("evolve", cbxValue("evolve"));
     params.set("metronome", cbxValue("metronome"));
     params.set("bpm", document.querySelector("#bpm").value);

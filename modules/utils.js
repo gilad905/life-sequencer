@@ -11,6 +11,7 @@
   const useModRow = document.querySelector("tone-step-sequencer").rows === 13;
   const modRow = 6;
   const drumRows = useModRow ? [4, 5, 7, 8] : [4, 5, 6, 7];
+  const assetsUrl = "https://gilad905.github.io/life-sequencer/assets";
 
   const keyGroups = [
     ["Gb4", "E4", "Db4", useModRow ? "B3" : "A3"],
@@ -42,7 +43,6 @@
   window.ls ??= {};
   window.ls = {
     ...window.ls,
-    //
     volumes,
     useModRow,
     modRow,
@@ -53,6 +53,7 @@
     drumLibs,
     modSections,
     isDev,
+    assetsUrl,
     sequencer,
     wrapAround,
   };

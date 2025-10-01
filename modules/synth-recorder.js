@@ -1,7 +1,27 @@
 (function () {
+  async function recordMetronome() {
+    const keys = ["C6", "C7"];
+    const recorder = new Tone.Recorder();
+    recorder.mimeType = "audio/webm";
+
+    const synth = new Tone.Synth({
+      envelope: { release: 0.01 },
+      volume: ls.volumes.metronome,
+    }).connect(recorder);
+    for (const key of keys) {
+      recorder.start();
+      await new Promise((res) => setTimeout(res, 2000));
+      synth.triggerAttackRelease(key, "8n");
+      await new Promise((res) => setTimeout(res, 2000));
+      const blob = await recorder.stop();
+      const wavBlob = await webmToWav(blob);
+      const url = URL.createObjectURL(wavBlob);
+      createLink(url, `metronome-${key}.wav`);
+    }
+  }
+
   async function recordSynths() {
     const keys = ["Gb3", "A3", "B3", "Db4", "E4", "Gb4"];
-    // const types = ["sine"];
     const types = ["square", "sine", "triangle", "sawtooth"];
     const recorder = new Tone.Recorder();
     recorder.mimeType = "audio/webm";
@@ -14,10 +34,10 @@
       }).connect(recorder);
 
       for (const key of keys) {
-        const name = `${type}-${key}`;
         const blob = await recordKey(synth, key, recorder);
         const wavBlob = await webmToWav(blob);
         const url = URL.createObjectURL(wavBlob);
+        const name = `${type}-${key}`;
         createLink(url, `${name}.wav`);
       }
     }
@@ -145,5 +165,6 @@
   if (ls.isDev) {
     // showDrumLinks();
     // Tone.Transport.on("start", recordSynths);
+    // Tone.Transport.on("start", recordMetronome);
   }
 })();

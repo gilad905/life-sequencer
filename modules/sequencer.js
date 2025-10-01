@@ -3,23 +3,24 @@
   const currentVoices = [];
   updateCurrentVoices();
 
-  ls.addStepAction((time, index) => {
-    if (index == 0 && ls.useModRow) {
-      updateCurrentVoices();
-    }
-  });
+  if (ls.useModRow) {
+    ls.addStepAction((time, index) => {
+      if (index === 0) {
+        updateCurrentVoices();
+      }
+    });
+  }
 
   ls.sequencer.addEventListener("trigger", onSequencerTrigger);
 
   function initVoices() {
-    const baseUrl = "https://gilad905.github.io/life-sequencer/assets";
     const voices = { drums: [] };
 
     for (const lib of ls.drumLibs) {
       const libVoice = [];
       for (const sample of ls.drumSamples) {
         const player = createPlayer({
-          url: `${baseUrl}/${lib}/${sample}.mp3`,
+          url: `${ls.assetsUrl}/${lib}/${sample}.mp3`,
           volume: ls.volumes.drums,
           fadeOut: "64n",
         });
@@ -36,7 +37,7 @@
         for (const keyGroup of ls.keyGroups) {
           const groupVoice = [];
           for (const key of keyGroup) {
-            const url = `${baseUrl}/synth-samples/${waveType}-${key}.wav`;
+            const url = `${ls.assetsUrl}/synth-samples/${waveType}-${key}.wav`;
             const allKeys = waveTypeVoices.flat();
             let player = allKeys.find((p) => p._url == url);
             player ??= createPlayer({ url, volume });

@@ -38,12 +38,22 @@
 
     for (let x = 0; x < matrix.length; x++) {
       for (let y = 0; y < matrix[x].length; y++) {
-        const neighbors = countNeighbors(x, y);
+        const neighbors = countNeighbors(x, y, 4);
         if (matrix[x][y]) {
-          // Cell is alive
           matrix[x][y] = neighbors === 2 || neighbors === 3;
+
+          // // cell age:
+          // const stayAlive = neighbors === 2 || neighbors === 3;
+          // if (stayAlive) {
+          //   if (matrix[x][y] === true) {
+          //     matrix[x][y] = 2;
+          //   } else {
+          //     matrix[x][y]++;
+          //   }
+          // } else {
+          //   matrix[x][y] = 0;
+          // }
         } else {
-          // Cell is dead
           matrix[x][y] = neighbors === 3;
         }
       }
@@ -53,7 +63,7 @@
     ls.sequencer.requestUpdate();
   }
 
-  function countNeighbors(x, y) {
+  function countNeighbors(x, y, maxCount) {
     const { _matrix } = ls.sequencer;
     let count = 0;
     for (let cX = -1; cX <= 1; cX++) {
@@ -64,6 +74,9 @@
         else if (newY >= _matrix[0].length) newY -= _matrix[0].length;
         if (_matrix[newX][newY]) {
           count++;
+          if (count == maxCount) {
+            return count;
+          }
         }
       }
     }

@@ -1,17 +1,23 @@
 (function () {
   const metronomeCbx = document.querySelector("#metronome");
+  const keys = ["C7", "C6"];
+  const players = [];
 
-  const synth = new Tone.Synth({
-    envelope: { release: 0.01 },
-    volume: ls.volumes.metronome,
-  }).toDestination();
+  for (const key of keys) {
+    const player = new Tone.Player({
+      url: `${ls.assetsUrl}/metronome-samples/metronome-${key}.wav`,
+      volume: ls.volumes.metronome,
+      fadeOut: "64n",
+    }).toDestination();
+    players.push(player);
+  }
 
   ls.addStepAction((time, index) => {
     if (metronomeCbx.checked) {
       if (index % 4 === 0) {
         const onFirstNote = index === 0;
-        const octave = onFirstNote ? 7 : 6;
-        synth.triggerAttackRelease(`C${octave}`, "16t", time);
+        const player = players[onFirstNote ? 0 : 1];
+        player.start(time);
       }
     }
   });

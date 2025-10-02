@@ -46,6 +46,26 @@
       #play-toggle:not([disabled]) :is(.spinner-border, [role="status"]) {
         display: none;
       }
+
+      .ls-icon {
+        background: no-repeat center;
+      }
+
+      .ls-icon-volume-up {
+        background-image: url("https://gilad905.github.io/life-sequencer/assets/icons/volume-up.svg");
+      }
+
+      .ls-icon-volume-mute {
+        background-image: url("https://gilad905.github.io/life-sequencer/assets/icons/volume-mute.svg");
+      }
+
+      .ls-icon-virus {
+        background-image: url("https://gilad905.github.io/life-sequencer/assets/icons/virus.svg");
+      }
+
+      .ls-icon-virus-mute {
+        background-image: url("https://gilad905.github.io/life-sequencer/assets/icons/virus-mute.svg");
+      }
     </style>
   </head>
   <body>
@@ -146,16 +166,14 @@
             <div class="btn-group-vertical" role="group">
               <button
                 type="button"
-                class="btn btn-outline-primary"
+                class="btn btn-outline-primary ls-icon ls-icon-volume-mute"
                 title="Mute"
-              >
-                <img
-                  src="https://github.com/gilad905/life-sequencer/assets/icons/volume-mute.svg"
-                  alt="Mute"
-                  width="32"
-                  height="32"
-                />
-              </button>
+              >some</button>
+              <button
+                type="button"
+                class="btn btn-outline-primary ls-icon ls-icon-virus"
+                title="Evolve"
+              ></button>
             </div>
           </div> -->
           <!-- <tone-step-sequencer rows="13"></tone-step-sequencer> -->

@@ -1,0 +1,40 @@
+/* for the icons */
+#play-toggle {
+  font-family: Arial;
+}
+
+#play-toggle:not([disabled]) :is(.spinner-border, [role="status"]) {
+  display: none;
+}
+
+#voice-buttons {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: space-around;
+}
+
+#voice-buttons .btn-group-vertical {
+  max-height: 20%;
+  flex-grow: 1;
+}
+
+.ls-icon {
+  background: no-repeat center;
+}
+
+.ls-icon-volume-up {
+  background-image: url("https://gilad905.github.io/life-sequencer/assets/icons/volume-up.svg");
+}
+
+.ls-icon-volume-mute {
+  background-image: url("https://gilad905.github.io/life-sequencer/assets/icons/volume-mute.svg");
+}
+
+.ls-icon-virus {
+  background-image: url("https://gilad905.github.io/life-sequencer/assets/icons/virus.svg");
+}
+
+.ls-icon-virus-mute {
+  background-image: url("https://gilad905.github.io/life-sequencer/assets/icons/virus-mute.svg");
+}

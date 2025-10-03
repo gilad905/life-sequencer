@@ -6,11 +6,14 @@
     <title>Game of Life Sequencer</title>
     <link rel="icon" />
     <link rel="stylesheet" href="./lib/bootstrap.min.css" />
+    <link rel="stylesheet" href="./style.css" />
+
     <script src="./lib/popper.min.js"></script>
     <script src="./lib/bootstrap.min.js"></script>
     <script src="./lib/Tone.js"></script>
     <script src="./lib/tone-ui.js"></script>
     <script src="./lib/components.js"></script>
+
     <style id="sequencer-style">
       /* injected into the sequencer shadow DOM */
       .cell:focus {
@@ -37,36 +40,6 @@
         filter: brightness(50%) !important;
       }
     </style>
-    <style>
-      /* for the icons */
-      #play-toggle {
-        font-family: Arial;
-      }
-
-      #play-toggle:not([disabled]) :is(.spinner-border, [role="status"]) {
-        display: none;
-      }
-
-      .ls-icon {
-        background: no-repeat center;
-      }
-
-      .ls-icon-volume-up {
-        background-image: url("https://gilad905.github.io/life-sequencer/assets/icons/volume-up.svg");
-      }
-
-      .ls-icon-volume-mute {
-        background-image: url("https://gilad905.github.io/life-sequencer/assets/icons/volume-mute.svg");
-      }
-
-      .ls-icon-virus {
-        background-image: url("https://gilad905.github.io/life-sequencer/assets/icons/virus.svg");
-      }
-
-      .ls-icon-virus-mute {
-        background-image: url("https://gilad905.github.io/life-sequencer/assets/icons/virus-mute.svg");
-      }
-    </style>
   </head>
   <body>
     <div class="container py-4" style="max-width: 900px">
@@ -88,11 +61,11 @@
         </div>
       </div>
       <div class="row mb-3 align-items-center">
-        <div class="col col-12 col-sm-6">
-          <label for="bpm" class="form-label">Tempo</label>
+        <div class="col col-4 col-sm-2" id="bpm-label">BPM</div>
+        <div class="col col-8 col-sm-4">
           <input
             type="range"
-            class="form-range"
+            class="form-range d-flex"
             id="bpm"
             min="60"
             max="240"
@@ -161,21 +134,45 @@
       </div>
 
       <div class="row mb-4">
-        <div class="col d-flex flex-direction-row">
-          <!-- <div id="voice-buttons" class="btn-toolbar">
+        <div class="col d-flex flex-direction-row flex-nowrap">
+          <div id="voice-buttons" class="btn-toolbar">
             <div class="btn-group-vertical" role="group">
               <button
                 type="button"
-                class="btn btn-outline-primary ls-icon ls-icon-volume-mute"
+                class="btn btn-primary ls-icon ls-icon-volume-up"
                 title="Mute"
-              >some</button>
+              ></button>
               <button
                 type="button"
-                class="btn btn-outline-primary ls-icon ls-icon-virus"
+                class="btn btn-primary ls-icon ls-icon-virus"
                 title="Evolve"
               ></button>
             </div>
-          </div> -->
+            <div class="btn-group-vertical" role="group">
+              <button
+                type="button"
+                class="btn btn-primary ls-icon ls-icon-volume-up"
+                title="Mute"
+              ></button>
+              <button
+                type="button"
+                class="btn btn-primary ls-icon ls-icon-virus"
+                title="Evolve"
+              ></button>
+            </div>
+            <div class="btn-group-vertical" role="group">
+              <button
+                type="button"
+                class="btn btn-primary ls-icon ls-icon-volume-up"
+                title="Mute"
+              ></button>
+              <button
+                type="button"
+                class="btn btn-primary ls-icon ls-icon-virus"
+                title="Evolve"
+              ></button>
+            </div>
+          </div>
           <!-- <tone-step-sequencer rows="13"></tone-step-sequencer> -->
           <tone-step-sequencer rows="12"></tone-step-sequencer>
         </div>

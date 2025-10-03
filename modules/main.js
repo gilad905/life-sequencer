@@ -154,7 +154,7 @@
   function updateBpm() {
     const bpm = document.querySelector("#bpm");
     Tone.getTransport().bpm.value = parseFloat(bpm.value);
-    const bpmLabel = document.querySelector("label[for=bpm]");
-    bpmLabel.textContent = `Tempo: ${bpm.value} BPM`;
+    const bpmLabel = document.querySelector("#bpm-label");
+    bpmLabel.textContent = `BPM: ${bpm.value}`;
   }
 })();
